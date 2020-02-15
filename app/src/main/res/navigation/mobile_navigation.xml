@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.gitrepos.android.ui.dashboard.DashboardFragment"
+        android:name="com.gitrepos.android.ui.dashboard.ReposFragment"
         android:label="@string/title_saved_list"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.gitrepos.android.ui.notifications.NotificationsFragment"
+        android:name="com.gitrepos.android.ui.notifications.SettingFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
