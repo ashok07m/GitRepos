@@ -1,4 +1,4 @@
-package com.gitrepos.android.ui.notifications
+package com.gitrepos.android.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

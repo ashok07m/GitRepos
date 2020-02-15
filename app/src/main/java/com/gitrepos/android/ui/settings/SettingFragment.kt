@@ -1,4 +1,4 @@
-package com.gitrepos.android.ui.notifications
+package com.gitrepos.android.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater

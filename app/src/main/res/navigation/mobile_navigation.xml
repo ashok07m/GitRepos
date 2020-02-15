@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.gitrepos.android.ui.notifications.SettingFragment"
+        android:name="com.gitrepos.android.ui.settings.SettingFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
