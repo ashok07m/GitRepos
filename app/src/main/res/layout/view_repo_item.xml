@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="60dp"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
         <ImageView
@@ -23,16 +23,67 @@
             app:srcCompat="@drawable/ic_arrow_right_24dp" />
 
         <TextView
-            android:id="@+id/repo_name"
+            android:id="@+id/txtTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Repo 1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imgMore"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+            android:id="@+id/txtDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:maxLines="3"
+            android:text="Description"
+            app:layout_constraintEnd_toEndOf="@+id/txtTitle"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+            app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
+
+        <TextView
+            android:id="@+id/txtLang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:drawableLeft="@drawable/ic_bullet_24dp"
+            android:gravity="center_vertical"
+            android:text="Java"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/txtDesc"
+            app:layout_constraintTop_toBottomOf="@+id/txtDesc" />
+
+        <TextView
+            android:id="@+id/txtStarCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:drawableLeft="@drawable/ic_star_24dp"
+            android:gravity="center_vertical"
+            android:text="Stars"
+            app:layout_constraintBottom_toBottomOf="@+id/txtLang"
+            app:layout_constraintStart_toEndOf="@+id/txtLang"
+            app:layout_constraintTop_toTopOf="@+id/txtLang"
+            app:layout_constraintVertical_bias="0.50" />
+
+        <TextView
+            android:id="@+id/txtLastUpdated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Last updated"
+            app:layout_constraintBottom_toBottomOf="@+id/txtLang"
+            app:layout_constraintStart_toEndOf="@+id/txtStarCount"
+            app:layout_constraintTop_toTopOf="@+id/txtLang" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
