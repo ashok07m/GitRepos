@@ -1,5 +1,6 @@
 package com.gitrepos.android.ui.home.model
 
+import android.view.View
 import com.gitrepos.android.R
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -14,10 +15,15 @@ class RepoItem(private val repo: Repo) : Item() {
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.txtTitle.text = repo.title
-        viewHolder.itemView.txtDesc.text = repo.description
+        viewHolder.itemView.txtDesc.visibility = View.GONE
+        repo.description?.let {
+            viewHolder.itemView.txtDesc.visibility = View.VISIBLE
+            viewHolder.itemView.txtDesc.text = repo.description
+        }
         viewHolder.itemView.txtLang.text = repo.language
         viewHolder.itemView.txtStarCount.text = repo.starCount.toString()
         viewHolder.itemView.txtLastUpdated.text = repo.lastUpdated
+
     }
 
     override fun getLayout(): Int = R.layout.view_repo_item

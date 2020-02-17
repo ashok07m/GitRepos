@@ -3,6 +3,7 @@ package com.gitrepos.android.data.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.widget.Toast
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
@@ -26,5 +27,12 @@ object AppUtils {
         return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
 
+    }
+
+    /**
+     * Shows toast
+     */
+    fun showToast(context: Context, message: Int) {
+        Toast.makeText(context, context.getString(message), Toast.LENGTH_LONG).show()
     }
 }

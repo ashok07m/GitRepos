@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,6 +31,8 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="Repo 1"
+            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imgMore"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,8 +43,9 @@
             android:id="@+id/txtDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:maxLines="3"
+            android:layout_marginTop="8dp"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:text="Description"
             app:layout_constraintEnd_toEndOf="@+id/txtTitle"
             app:layout_constraintHorizontal_bias="0.0"

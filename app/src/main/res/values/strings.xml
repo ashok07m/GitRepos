@@ -3,4 +3,6 @@
     <string name="title_home">Home</string>
     <string name="title_saved_list">Repos</string>
     <string name="title_settings">Settings</string>
+    <string name="message_internet_unavailable">Internet not available</string>
+    <string name="message_error_fetching_data">Error occured while fetching data</string>
 </resources>

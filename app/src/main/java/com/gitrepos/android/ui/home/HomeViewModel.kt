@@ -1,33 +1,42 @@
 package com.gitrepos.android.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gitrepos.android.R
 import com.gitrepos.android.data.repositories.GitRepository
 import com.gitrepos.android.internal.GitApiResponse
 import com.gitrepos.android.ui.home.model.RepoItem
 import kotlinx.coroutines.launch
-import org.koin.core.context.GlobalContext.get
 
 class HomeViewModel(private val gitRepository: GitRepository) : ViewModel() {
 
-    private val _gitReposMutableLiveData = MutableLiveData<List<RepoItem>>()
-    val gitReposLiveData: LiveData<List<RepoItem>> = _gitReposMutableLiveData
+    private val _successMutableLiveData = MutableLiveData<List<RepoItem>>()
+    val successLiveData: LiveData<List<RepoItem>> = _successMutableLiveData
+
+    private val _errorMutableLiveData = MutableLiveData<Int>()
+    val errorLiveData: LiveData<Int> = _errorMutableLiveData
+
+    init {
+        gitRepository.successLiveData.observeForever {
+            _successMutableLiveData.value = it
+        }
+
+        gitRepository.errorLiveData.observeForever {
+            if (it == GitApiResponse.Error.ErrorCodes.NoConnectivityError) {
+                _errorMutableLiveData.value = R.string.message_internet_unavailable
+            } else {
+                _errorMutableLiveData.value = R.string.message_error_fetching_data
+            }
+        }
+    }
 
     /**
      * Fetch list of repositories from network
      */
     fun fetchRepositories() = viewModelScope.launch {
-        when (val response = gitRepository.getPublicGitRepos()) {
-            is GitApiResponse.Success -> {
-                Log.d(TAG, "success : ${response.repositories}")
-            }
-            is GitApiResponse.Error -> {
-                Log.d(TAG, "Error : ${response.errorCode}")
-            }
-        }
+        gitRepository.getPublicGitRepos()
     }
 
     companion object {

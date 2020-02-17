@@ -7,8 +7,8 @@ package com.gitrepos.android.ui.home.model
 
 data class Repo(
     val title: String,
-    val description: String,
-    val language: String,
-    val starCount: Int,
-    val lastUpdated: String
+    val description: String?,
+    val language: String?,
+    val starCount: Int?,
+    val lastUpdated: String?
 )

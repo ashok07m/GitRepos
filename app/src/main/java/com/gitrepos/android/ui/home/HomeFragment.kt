@@ -4,17 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.gitrepos.android.R
-import com.gitrepos.android.data.network.model.GitRepositories
+import com.gitrepos.android.data.utils.AppUtils
 import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -30,8 +27,11 @@ class HomeFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        homeViewModel.gitReposLiveData.observe(viewLifecycleOwner, reposObserver)
+        homeViewModel.successLiveData.observe(viewLifecycleOwner, successObserver)
+        homeViewModel.errorLiveData.observe(viewLifecycleOwner, errorObserver)
+
         homeViewModel.fetchRepositories()
+
         groupAdapter.setOnItemClickListener(onItemClickListener)
         root.rvHome.apply {
             adapter = groupAdapter
@@ -42,8 +42,15 @@ class HomeFragment : Fragment() {
     /**
      * Observer to observe the repos list
      */
-    private val reposObserver: Observer<List<RepoItem>> = Observer {
+    private val successObserver: Observer<List<RepoItem>> = Observer {
+        groupAdapter.addAll(it)
+    }
 
+    /**
+     * Observer to observe the error message
+     */
+    private val errorObserver: Observer<Int> = Observer {
+        AppUtils.showToast(context!!, it)
     }
 
     /**
