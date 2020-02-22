@@ -1,4 +1,4 @@
-package com.gitrepos.android.data.network.model
+package com.gitrepos.android.data.network.model.git
 
 
 import com.google.gson.annotations.SerializedName

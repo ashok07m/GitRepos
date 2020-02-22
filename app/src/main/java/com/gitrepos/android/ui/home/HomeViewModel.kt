@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gitrepos.android.R
+import com.gitrepos.android.data.network.source.git.GitResult
 import com.gitrepos.android.data.repositories.GitRepository
-import com.gitrepos.android.internal.GitApiResponse
 import com.gitrepos.android.ui.home.model.RepoItem
 import kotlinx.coroutines.launch
 
@@ -24,7 +24,7 @@ class HomeViewModel(private val gitRepository: GitRepository) : ViewModel() {
         }
 
         gitRepository.errorLiveData.observeForever {
-            if (it == GitApiResponse.Error.ErrorCodes.NoConnectivityError) {
+            if (it == GitResult.Error.ErrorCodes.NoConnectivityError) {
                 _errorMutableLiveData.value = R.string.message_internet_unavailable
             } else {
                 _errorMutableLiveData.value = R.string.message_error_fetching_data
