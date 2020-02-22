@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "658147581039",
+    "firebase_url": "https://gitrepos-675c7.firebaseio.com",
+    "project_id": "gitrepos-675c7",
+    "storage_bucket": "gitrepos-675c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658147581039:android:3f3be519881632a833c19a",
+        "android_client_info": {
+          "package_name": "com.gitrepos.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658147581039-o40psnbil8fmcnhdorbj4llfjbs5rfhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKy9X1hNfM2MgqivrKzD7EYIecTrhYbVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658147581039-o40psnbil8fmcnhdorbj4llfjbs5rfhp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

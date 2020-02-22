@@ -10,6 +10,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.3'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -36,6 +37,7 @@ ext {
     room_version = '2.2.3'
     okHttpIntercept_version = '4.2.0'
     koin_version = '2.0.1'
+    firebase_auth_version = '19.2.0'
 }
 
 task clean(type: Delete) {
