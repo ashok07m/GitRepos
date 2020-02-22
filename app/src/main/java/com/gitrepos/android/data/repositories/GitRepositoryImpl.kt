@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : GitRepository {
 
-    private var lastVisitedIndex = 0
+    private var lastVisitedIndex = 1
     private val _successMutableLiveData = MutableLiveData<List<RepoItem>>()
     override val successLiveData: LiveData<List<RepoItem>> = _successMutableLiveData
 
@@ -45,30 +45,31 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
         }
     }
 
-    private suspend fun fetchGitLanguage(fullName: String) = withContext(Dispatchers.Default) {
-        var languages = ""
-        when (val response = gitReposDataSource.fetchRepoLanguages(fullName)) {
-            is GitResult.SuccessLang -> {
-                languages = response.language
-                Log.d(TAG, "languages :$languages")
+    private suspend fun fetchGitLanguage(owner: String, repo: String) =
+        withContext(Dispatchers.Default) {
+            var languages = ""
+            when (val response = gitReposDataSource.fetchRepoLanguages(owner, repo)) {
+                is GitResult.SuccessLang -> {
+                    languages = response.language
+                    Log.d(TAG, "languages :$languages")
+                }
+                is GitResult.Error -> {
+                    val error = response.errorCode
+                    Log.d(TAG, "Error : $error")
+                }
+                else -> {
+                    Log.d(TAG, "response :$response")
+                }
             }
-            is GitResult.Error -> {
-                val error = response.errorCode
-                Log.d(TAG, "Error : $error")
-            }
-            else -> {
-                Log.d(TAG, "response :$response")
-            }
+            return@withContext languages
         }
-        return@withContext languages
-    }
 
     private suspend fun zipRequests(repos: List<GitRepositories>): List<RepoItem> {
         var repo: Repo
-        var lang: String
+        var lang: String = ""
         val itemList = arrayListOf<RepoItem>()
         repos.forEach {
-            lang = fetchGitLanguage(it.languagesUrl)
+            //lang = fetchGitLanguage(it.owner.login, it.name)
             repo = Repo(it.name, it.description, lang, 0, null)
             itemList.add(RepoItem(repo))
         }

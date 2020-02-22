@@ -6,7 +6,7 @@ package com.gitrepos.android.data.network.source.git
 interface GitReposDataSource {
 
     suspend fun getPublicGitRepos(lastVisitedIndex: Int): GitResult
-    suspend fun fetchRepoLanguages(fullName: String): GitResult
+    suspend fun fetchRepoLanguages(owner: String, repo: String): GitResult
 
 
 }

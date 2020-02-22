@@ -3,6 +3,8 @@ package com.gitrepos.android.di.module
 import com.gitrepos.android.R
 import com.gitrepos.android.data.network.RetrofitClient
 import com.gitrepos.android.data.network.api.GitApiService
+import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptor
+import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptorImpl
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptor
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptorImpl
 import com.gitrepos.android.data.network.source.git.GitReposDataSource
@@ -23,8 +25,19 @@ import org.koin.dsl.module
 
 val appModule = module {
     single<ConnectivityInterceptor> { ConnectivityInterceptorImpl(androidContext()) }
+    single<AuthTokenInterceptor> {
+        AuthTokenInterceptorImpl(
+            androidContext().getString(R.string.authToken)
+        )
+    }
     single { RetrofitClient(get()) }
-    factory { GitApiService.invoke(get(), androidContext().getString(R.string.base_url_git_repos)) }
+    factory {
+        GitApiService.invoke(
+            get(),
+            get(),
+            androidContext().getString(R.string.base_url_git_repos)
+        )
+    }
     single<GitReposDataSource> {
         GitReposDataSourceImpl(
             get()
@@ -34,7 +47,7 @@ val appModule = module {
     viewModel { HomeViewModel(get()) }
 
 
-    single<LoginDataSource> { LoginDataSource() }
-    single<LoginRepository> { LoginRepository(get()) }
+    single { LoginDataSource() }
+    single { LoginRepository(get()) }
     viewModel { LoginViewModel(get()) }
 }

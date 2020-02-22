@@ -35,12 +35,19 @@ class GitReposDataSourceImpl(private val gitApiService: GitApiService) :
             }
         }
 
-    override suspend fun fetchRepoLanguages(fullName: String): GitResult =
+    override suspend fun fetchRepoLanguages(owner: String, repo: String): GitResult =
         withContext(Dispatchers.IO) {
             return@withContext try {
-                val response = gitApiService.fetchRepoLanguages(fullName)
+                val response = gitApiService.fetchRepoLanguages(owner, repo)
                 if (response.isSuccessful) {
-                    GitResult.SuccessLang(response.body().orEmpty())
+                    val langObject = response.body()
+                    var mainLang = ""
+                    langObject?.let {
+                        if (it.size() > 0)
+                            mainLang = it.keySet().iterator().next()
+                    }
+
+                    GitResult.SuccessLang(mainLang)
                 } else {
                     GitResult.Error(ErrorCodes.ServerError, response.errorBody().toString())
                 }
