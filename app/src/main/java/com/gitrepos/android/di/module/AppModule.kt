@@ -1,6 +1,7 @@
 package com.gitrepos.android.di.module
 
 import com.gitrepos.android.R
+import com.gitrepos.android.data.database.AppDatabase
 import com.gitrepos.android.data.network.RetrofitClient
 import com.gitrepos.android.data.network.api.GitApiService
 import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptor
@@ -10,9 +11,7 @@ import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptorImpl
 import com.gitrepos.android.data.network.source.git.GitReposDataSource
 import com.gitrepos.android.data.network.source.git.GitReposDataSourceImpl
 import com.gitrepos.android.data.network.source.login.LoginDataSource
-import com.gitrepos.android.data.repositories.GitRepository
-import com.gitrepos.android.data.repositories.GitRepositoryImpl
-import com.gitrepos.android.data.repositories.LoginRepository
+import com.gitrepos.android.data.repositories.*
 import com.gitrepos.android.ui.details.DetailsViewModel
 import com.gitrepos.android.ui.home.HomeViewModel
 import com.gitrepos.android.ui.login.LoginViewModel
@@ -52,5 +51,8 @@ val appModule = module {
     single { LoginRepository(get()) }
     viewModel { LoginViewModel(get()) }
 
-    viewModel { DetailsViewModel(get()) }
+    single { AppDatabase.getAppDatabaseInstance(get()) }
+    factory { get<AppDatabase>().reposDao() }
+    single<DatabaseRepository> { DatabaseRepositoryImpl(get()) }
+    viewModel { DetailsViewModel(get(), get()) }
 }

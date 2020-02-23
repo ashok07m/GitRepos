@@ -22,4 +22,6 @@
     <string name="label_language">Language</string>
     <string name="lang">Language</string>
     <string name="save">Save</string>
+    <string name="msg_repo_saved">Repository saved</string>
+    <string name="msg_unable_to_save_repo">Repository already saved / Unable to save</string>
 </resources>

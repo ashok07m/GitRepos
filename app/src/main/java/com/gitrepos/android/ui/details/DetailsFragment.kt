@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
@@ -12,6 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.gitrepos.android.R
+import com.gitrepos.android.data.database.entity.ReposEntity
 import kotlinx.android.synthetic.main.fragment_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -42,6 +44,18 @@ class DetailsFragment : Fragment() {
         txtOwner.text = repo.owner
         txtDescValue.text = repo.description
         txtTitleValue.text = repo.title
+
+        btnSave.setOnClickListener {
+            val reposEntity = ReposEntity(
+                title = repo.title,
+                owner = repo.owner,
+                avatarUrl = repo.avatarUrl,
+                description = repo.description,
+                language = txtLangValue.text.toString()
+            )
+            detailsViewModel.saveRepoDetails(reposEntity)
+                .observe(this@DetailsFragment, saveResultObserver)
+        }
     }
 
 
@@ -50,6 +64,18 @@ class DetailsFragment : Fragment() {
      */
     private val languageObserver = Observer<String> {
         txtLangValue.text = it ?: "NA"
+    }
+
+    /**
+     * Observes repository save result
+     */
+    private val saveResultObserver = Observer<Boolean> {
+        val message = if (it) {
+            R.string.msg_repo_saved
+        } else {
+            R.string.msg_unable_to_save_repo
+        }
+        Toast.makeText(context, getString(message), Toast.LENGTH_SHORT).show()
     }
 
     /**
@@ -65,10 +91,6 @@ class DetailsFragment : Fragment() {
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imgOwnerAvatar)
-    }
-
-    companion object {
-        fun newInstance() = DetailsFragment()
     }
 }
 
