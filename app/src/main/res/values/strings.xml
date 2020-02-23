@@ -16,7 +16,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="label_lang">Language</string>
-    <string name="label_repo_title">Reository</string>
+    <string name="label_repo_title">Repository</string>
     <string name="label_owner">Owner</string>
     <string name="label_desc">Description</string>
     <string name="label_language">Language</string>

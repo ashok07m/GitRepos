@@ -8,13 +8,14 @@ import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptor
 import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptorImpl
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptor
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptorImpl
-import com.gitrepos.android.data.network.source.git.GitReposDataSource
-import com.gitrepos.android.data.network.source.git.GitReposDataSourceImpl
-import com.gitrepos.android.data.network.source.login.LoginDataSource
 import com.gitrepos.android.data.repositories.*
+import com.gitrepos.android.data.source.git.GitReposDataSource
+import com.gitrepos.android.data.source.git.GitReposDataSourceImpl
+import com.gitrepos.android.data.source.login.LoginDataSource
 import com.gitrepos.android.ui.details.DetailsViewModel
 import com.gitrepos.android.ui.home.HomeViewModel
 import com.gitrepos.android.ui.login.LoginViewModel
+import com.gitrepos.android.ui.repos.ReposViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -43,9 +44,9 @@ val appModule = module {
             get()
         )
     }
+
     single<GitRepository> { GitRepositoryImpl(get()) }
     viewModel { HomeViewModel(get()) }
-
 
     single { LoginDataSource() }
     single { LoginRepository(get()) }
@@ -54,5 +55,8 @@ val appModule = module {
     single { AppDatabase.getAppDatabaseInstance(get()) }
     factory { get<AppDatabase>().reposDao() }
     single<DatabaseRepository> { DatabaseRepositoryImpl(get()) }
+
     viewModel { DetailsViewModel(get(), get()) }
+
+    viewModel { ReposViewModel(get()) }
 }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
@@ -14,6 +13,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.gitrepos.android.R
 import com.gitrepos.android.data.database.entity.ReposEntity
+import com.gitrepos.android.data.utils.AppUtils
 import kotlinx.android.synthetic.main.fragment_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -31,11 +31,17 @@ class DetailsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         val repo = args.RepoDetailsArgs
-        detailsViewModel.langLiveData.observe(this, languageObserver)
-        detailsViewModel.fetchLanguage(repo.owner, repo.title)
+        val isShowSavedDetails = args.showSavedDetails
+
+        if (!isShowSavedDetails) {
+            detailsViewModel.langLiveData.observe(this, languageObserver)
+            detailsViewModel.fetchLanguage(repo.owner, repo.title)
+        } else {
+            txtLangValue.text = repo.language
+        }
 
         if (!repo.avatarUrl.isNullOrEmpty()) {
             loadImage(repo.avatarUrl)
@@ -54,10 +60,9 @@ class DetailsFragment : Fragment() {
                 language = txtLangValue.text.toString()
             )
             detailsViewModel.saveRepoDetails(reposEntity)
-                .observe(this@DetailsFragment, saveResultObserver)
+                .observe(viewLifecycleOwner, saveResultObserver)
         }
     }
-
 
     /**
      * Observes repository language
@@ -75,7 +80,7 @@ class DetailsFragment : Fragment() {
         } else {
             R.string.msg_unable_to_save_repo
         }
-        Toast.makeText(context, getString(message), Toast.LENGTH_SHORT).show()
+        AppUtils.showToast(context!!, message)
     }
 
     /**

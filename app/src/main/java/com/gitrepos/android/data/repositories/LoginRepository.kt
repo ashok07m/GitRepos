@@ -1,8 +1,8 @@
 package com.gitrepos.android.data.repositories
 
 import com.gitrepos.android.data.network.model.login.LoggedInUser
-import com.gitrepos.android.data.network.source.login.LoginDataSource
-import com.gitrepos.android.data.network.source.login.LoginResult
+import com.gitrepos.android.data.source.login.LoginDataSource
+import com.gitrepos.android.data.source.login.LoginResult
 
 /**
  * Class that requests authentication and user information from the remote data source and

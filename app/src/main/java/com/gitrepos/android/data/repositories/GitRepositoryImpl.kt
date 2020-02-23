@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.gitrepos.android.data.network.model.git.GitRepositories
-import com.gitrepos.android.data.network.source.git.GitReposDataSource
-import com.gitrepos.android.data.network.source.git.GitResult
+import com.gitrepos.android.data.source.git.GitReposDataSource
+import com.gitrepos.android.data.source.git.GitResult
 import com.gitrepos.android.ui.home.model.Repo
 import com.gitrepos.android.ui.home.model.RepoItem
 import kotlinx.coroutines.Dispatchers
@@ -74,10 +74,7 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
                 it.owner.login,
                 it.name,
                 it.fullName,
-                it.description ?: "N.A",
-                it.languagesUrl,
-                0,
-                null
+                it.description ?: "N.A"
             )
             itemList.add(RepoItem(repo))
         }

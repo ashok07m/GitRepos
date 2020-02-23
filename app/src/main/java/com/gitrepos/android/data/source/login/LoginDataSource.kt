@@ -1,4 +1,4 @@
-package com.gitrepos.android.data.network.source.login
+package com.gitrepos.android.data.source.login
 
 import com.gitrepos.android.data.network.model.login.LoggedInUser
 import java.io.IOException

@@ -1,8 +1,8 @@
-package com.gitrepos.android.data.network.source.git
+package com.gitrepos.android.data.source.git
 
 import android.util.Log
 import com.gitrepos.android.data.network.api.GitApiService
-import com.gitrepos.android.data.network.source.git.GitResult.Error.ErrorCodes
+import com.gitrepos.android.data.source.git.GitResult.Error.ErrorCodes
 import com.gitrepos.android.internal.NoConnectivityException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

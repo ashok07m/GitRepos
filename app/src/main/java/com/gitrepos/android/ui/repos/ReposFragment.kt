@@ -1,7 +1,6 @@
-package com.gitrepos.android.ui.home
+package com.gitrepos.android.ui.repos
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,17 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gitrepos.android.R
-import com.gitrepos.android.data.utils.AppUtils
 import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.fragment_home.view.*
+import kotlinx.android.synthetic.main.fragment_repos.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class HomeFragment : Fragment() {
+class ReposFragment : Fragment() {
 
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val reposViewModel: ReposViewModel by viewModel()
     private val groupAdapter by lazy { GroupAdapter<GroupieViewHolder>() }
 
     override fun onCreateView(
@@ -27,15 +25,13 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val root = inflater.inflate(R.layout.fragment_repos, container, false)
 
-        homeViewModel.successLiveData.observe(viewLifecycleOwner, successObserver)
-        homeViewModel.errorLiveData.observe(viewLifecycleOwner, errorObserver)
-
-        homeViewModel.fetchRepositories()
+        reposViewModel.reposLiveData.observe(viewLifecycleOwner, reposObserver)
+        reposViewModel.fetchRepositories()
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
-        root.rvHome.apply {
+        root.rvRepos.apply {
             adapter = groupAdapter
         }
         return root
@@ -44,17 +40,9 @@ class HomeFragment : Fragment() {
     /**
      * Observer to observe the repos list
      */
-    private val successObserver: Observer<List<RepoItem>> = Observer {
-        //        if (groupAdapter.itemCount > 0) groupAdapter.removeAll(it)
+    private val reposObserver: Observer<List<RepoItem>> = Observer {
+        groupAdapter.clear()
         groupAdapter.addAll(it)
-        Log.d("successObserver", "successObserver : size: ${groupAdapter.itemCount}")
-    }
-
-    /**
-     * Observer to observe the error message
-     */
-    private val errorObserver: Observer<Int> = Observer {
-        AppUtils.showToast(context!!, it)
     }
 
     /**
@@ -63,9 +51,9 @@ class HomeFragment : Fragment() {
     private val onItemClickListener = OnItemClickListener { item, _ ->
         if (item is RepoItem) {
             val repoInfo = item.repo
-            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo)
+            val action =
+                ReposFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo, true)
             findNavController().navigate(action)
         }
     }
-
 }

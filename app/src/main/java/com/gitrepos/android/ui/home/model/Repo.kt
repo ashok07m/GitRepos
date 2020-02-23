@@ -13,8 +13,8 @@ data class Repo(
     val owner: String,
     val title: String,
     val fullName: String,
-    val description: String,
-    val languageUrl: String,
-    val starCount: Int?,
-    val lastUpdated: String?
+    val description: String? = "N.A",
+    val language: String? = "N.A",
+    val starCount: Int? = 0,
+    val lastUpdated: String? = null
 ) : Parcelable

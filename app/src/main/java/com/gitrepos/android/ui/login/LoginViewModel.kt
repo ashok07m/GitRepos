@@ -5,8 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gitrepos.android.R
-import com.gitrepos.android.data.network.source.login.LoginResult.Success
 import com.gitrepos.android.data.repositories.LoginRepository
+import com.gitrepos.android.data.source.login.LoginResult.Success
 
 class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 

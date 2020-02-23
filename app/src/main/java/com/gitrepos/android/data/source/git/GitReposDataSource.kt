@@ -1,4 +1,4 @@
-package com.gitrepos.android.data.network.source.git
+package com.gitrepos.android.data.source.git
 
 /**
  * Provides methods to interact with network

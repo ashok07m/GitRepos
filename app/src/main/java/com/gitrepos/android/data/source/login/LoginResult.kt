@@ -1,4 +1,4 @@
-package com.gitrepos.android.data.network.source.login
+package com.gitrepos.android.data.source.login
 
 /**
  * A generic class that holds a value with its loading status.
