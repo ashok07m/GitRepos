@@ -13,6 +13,7 @@ import com.gitrepos.android.data.network.source.login.LoginDataSource
 import com.gitrepos.android.data.repositories.GitRepository
 import com.gitrepos.android.data.repositories.GitRepositoryImpl
 import com.gitrepos.android.data.repositories.LoginRepository
+import com.gitrepos.android.ui.details.DetailsViewModel
 import com.gitrepos.android.ui.home.HomeViewModel
 import com.gitrepos.android.ui.login.LoginViewModel
 import org.koin.android.ext.koin.androidContext
@@ -50,4 +51,6 @@ val appModule = module {
     single { LoginDataSource() }
     single { LoginRepository(get()) }
     viewModel { LoginViewModel(get()) }
+
+    viewModel { DetailsViewModel(get()) }
 }

@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.view_repo_item.view.*
  * @author Created by kuashok on 2020-02-16
  */
 
-class RepoItem(private val repo: Repo) : Item() {
+class RepoItem(val repo: Repo) : Item() {
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
         viewHolder.itemView.txtTitle.text = repo.title
@@ -20,7 +20,7 @@ class RepoItem(private val repo: Repo) : Item() {
             viewHolder.itemView.txtDesc.visibility = View.VISIBLE
             viewHolder.itemView.txtDesc.text = repo.description
         }
-        viewHolder.itemView.txtLang.text = repo.language
+        viewHolder.itemView.txtLangValue.text = repo.languageUrl
         viewHolder.itemView.txtStarCount.text = repo.starCount.toString()
         viewHolder.itemView.txtLastUpdated.text = repo.lastUpdated
 

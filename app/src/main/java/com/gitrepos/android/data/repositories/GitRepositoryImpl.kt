@@ -45,7 +45,7 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
         }
     }
 
-    private suspend fun fetchGitLanguage(owner: String, repo: String) =
+    override suspend fun fetchGitLanguage(owner: String, repo: String) =
         withContext(Dispatchers.Default) {
             var languages = ""
             when (val response = gitReposDataSource.fetchRepoLanguages(owner, repo)) {
@@ -66,11 +66,18 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
 
     private suspend fun zipRequests(repos: List<GitRepositories>): List<RepoItem> {
         var repo: Repo
-        var lang: String = ""
         val itemList = arrayListOf<RepoItem>()
         repos.forEach {
             //lang = fetchGitLanguage(it.owner.login, it.name)
-            repo = Repo(it.name, it.description, lang, 0, null)
+            repo = Repo(
+                it.owner.avatarUrl,
+                it.owner.login,
+                it.name,
+                it.description ?: "N.A",
+                it.languagesUrl,
+                0,
+                null
+            )
             itemList.add(RepoItem(repo))
         }
 

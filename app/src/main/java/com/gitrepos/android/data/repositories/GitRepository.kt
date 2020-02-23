@@ -8,4 +8,5 @@ interface GitRepository {
     val successLiveData: LiveData<List<RepoItem>>
     val errorLiveData: LiveData<GitResult.Error.ErrorCodes>
     suspend fun getPublicGitRepos()
+    suspend fun fetchGitLanguage(owner: String, repo: String): String
 }

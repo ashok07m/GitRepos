@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.gitrepos.android.R
 import com.gitrepos.android.data.utils.AppUtils
 import com.gitrepos.android.ui.home.model.RepoItem
@@ -56,8 +57,12 @@ class HomeFragment : Fragment() {
     /**
      * Item click listener
      */
-    private val onItemClickListener = OnItemClickListener { item, view ->
-
+    private val onItemClickListener = OnItemClickListener { item, _ ->
+        if (item is RepoItem) {
+            val repoInfo = item.repo
+            val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo)
+            findNavController().navigate(action)
+        }
     }
 
 }
