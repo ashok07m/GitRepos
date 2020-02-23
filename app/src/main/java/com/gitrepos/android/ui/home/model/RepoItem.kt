@@ -15,7 +15,7 @@ import java.io.File
 
 
 /**
- * @author Created by kuashok on 2020-02-16
+ * Class to bind the data to repositories list item
  */
 
 class RepoItem(val repo: Repo) : Item() {
