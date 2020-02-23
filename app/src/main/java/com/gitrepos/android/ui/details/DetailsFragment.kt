@@ -64,20 +64,8 @@ class DetailsFragment : Fragment() {
             .signature(ObjectKey(File(uri).lastModified()))
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .transition(DrawableTransitionOptions.withCrossFade())
-            .into(ivOwnerAvatar)
+            .into(imgOwnerAvatar)
     }
-
-    /* override fun onOptionsItemSelected(item: MenuItem): Boolean {
-         return when (item.itemId) {
-             is android.R.id.home -> {
-                 true
-             }
-             else -> {
-                 super.onOptionsItemSelected(item)
-             }
-         }
-
-     } */
 
     companion object {
         fun newInstance() = DetailsFragment()

@@ -73,6 +73,7 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
                 it.owner.avatarUrl,
                 it.owner.login,
                 it.name,
+                it.fullName,
                 it.description ?: "N.A",
                 it.languagesUrl,
                 0,

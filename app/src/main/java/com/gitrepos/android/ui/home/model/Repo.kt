@@ -12,6 +12,7 @@ data class Repo(
     val avatarUrl: String,
     val owner: String,
     val title: String,
+    val fullName: String,
     val description: String,
     val languageUrl: String,
     val starCount: Int?,
