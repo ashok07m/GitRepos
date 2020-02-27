@@ -49,8 +49,8 @@ val appModule = module {
     viewModel { HomeViewModel(get()) }
 
     single { LoginDataSource() }
-    single { LoginRepository(get()) }
-    viewModel { LoginViewModel(get()) }
+    single<LoginRepository> { LoginRepositoryImpl(get()) }
+    viewModel { LoginViewModel(get(), get()) }
 
     single { AppDatabase.getAppDatabaseInstance(get()) }
     factory { get<AppDatabase>().reposDao() }

@@ -102,4 +102,7 @@ dependencies {
 
     // debug sqlite
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+
+    // firebase play services version
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$firebase_play_services_version"
 }

@@ -38,6 +38,10 @@ class HomeFragment : Fragment() {
         root.rvHome.apply {
             adapter = groupAdapter
         }
+        /*
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+
+        }*/
         return root
     }
 

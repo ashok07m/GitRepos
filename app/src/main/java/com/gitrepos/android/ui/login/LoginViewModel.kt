@@ -1,14 +1,18 @@
 package com.gitrepos.android.ui.login
 
+import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gitrepos.android.R
 import com.gitrepos.android.data.repositories.LoginRepository
 import com.gitrepos.android.data.source.login.LoginResult.Success
+import kotlinx.coroutines.launch
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val context: Context, private val loginRepository: LoginRepository) :
+    ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
@@ -16,13 +20,18 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String) = viewModelScope.launch {
         // can be launched in a separate asynchronous job
         val result = loginRepository.login(username, password)
 
         if (result is Success) {
             _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+                LoginResult(
+                    success = LoggedInUserView(
+                        displayName = result.data.displayName ?: context.getString(R.string.user),
+                        email = result.data.email ?: context.getString(R.string.unknown)
+                    )
+                )
         } else {
             _loginResult.value = LoginResult(error = R.string.login_failed)
         }
