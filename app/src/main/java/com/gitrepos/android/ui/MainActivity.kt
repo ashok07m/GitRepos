@@ -10,10 +10,13 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.gitrepos.android.R
+import com.gitrepos.android.ui.login.LoggedInUserView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
+
+    private var loggedInUserView: LoggedInUserView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,5 +55,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
                 nav_view.visibility = View.VISIBLE
             }
         }
+    }
+
+    fun setLoggedInUser(loggedInUserView: LoggedInUserView) {
+        this.loggedInUserView = loggedInUserView
+    }
+
+    fun getLoggedInUser(): LoggedInUserView? {
+        return loggedInUserView
     }
 }

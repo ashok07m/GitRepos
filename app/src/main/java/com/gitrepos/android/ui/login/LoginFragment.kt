@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.gitrepos.android.R
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,8 +27,7 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val root = inflater.inflate(R.layout.fragment_login, container, false)
-        return root
+        return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
 
@@ -37,11 +35,13 @@ class LoginFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         // check user's current logged status
-        val currentUser = FirebaseAuth.getInstance().currentUser
-        currentUser?.let {
-            view?.findNavController()?.navigate(R.id.navigation_home)
-            return
-        }
+        loginViewModel.getCurrentLoggedInUser()?.observe(viewLifecycleOwner,
+            Observer {
+                it?.let {
+                    updateUiWithUser(it)
+                }
+            })
+
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner, Observer {
             val loginState = it ?: return@Observer
@@ -104,16 +104,9 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
+        val directions = LoginFragmentDirections.actionLoginFragmentToNavigationHome(model)
+        view?.findNavController()?.navigate(directions)
 
-        val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
-        Toast.makeText(
-            context,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
-
-        view?.findNavController()?.navigate(R.id.navigation_home)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

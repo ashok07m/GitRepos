@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_navigation_home_to_detailsFragment"
             app:destination="@id/navigation_details" />
+        <argument
+            android:name="loginInfo"
+            app:argType="com.gitrepos.android.ui.login.LoggedInUserView" />
     </fragment>
 
     <fragment

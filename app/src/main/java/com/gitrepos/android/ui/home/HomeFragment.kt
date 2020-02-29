@@ -5,11 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.gitrepos.android.R
 import com.gitrepos.android.data.utils.AppUtils
+import com.gitrepos.android.ui.MainActivity
 import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
@@ -21,6 +25,7 @@ class HomeFragment : Fragment() {
 
     private val homeViewModel: HomeViewModel by viewModel()
     private val groupAdapter by lazy { GroupAdapter<GroupieViewHolder>() }
+    private val args: HomeFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,20 +43,52 @@ class HomeFragment : Fragment() {
         root.rvHome.apply {
             adapter = groupAdapter
         }
-        /*
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
 
-        }*/
+        updateLoggedInUser()
+
+        // finish activity on Home back press action
+        requireActivity().onBackPressedDispatcher.addCallback {
+            activity?.finish()
+        }
+
+        Log.e("TAG", "onCreateView() :$this")
         return root
+    }
+
+    /**
+     *  Set loggedIn info in MainActivity and display loggedin user
+     */
+    private fun updateLoggedInUser() {
+        (activity as MainActivity).setLoggedInUser(args.loginInfo)
+
+        val welcome = getString(R.string.welcome)
+        val displayName = args.loginInfo.displayName
+        Toast.makeText(context, "$welcome $displayName", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.e("TAG", "onCreate() :$this")
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.e("TAG", "onDestroyView() :$this")
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("TAG", "onDestroy() :$this")
     }
 
     /**
      * Observer to observe the repos list
      */
     private val successObserver: Observer<List<RepoItem>> = Observer {
-        //        if (groupAdapter.itemCount > 0) groupAdapter.removeAll(it)
         groupAdapter.addAll(it)
-        Log.d("successObserver", "successObserver : size: ${groupAdapter.itemCount}")
+        Log.e("TAG", "successObserver : size: ${groupAdapter.itemCount}")
     }
 
     /**
