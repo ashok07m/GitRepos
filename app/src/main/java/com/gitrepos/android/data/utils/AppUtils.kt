@@ -30,13 +30,13 @@ object AppUtils {
      * Shows toast
      */
     fun showToast(context: Context, message: Int) {
-        Toast.makeText(context, context.getString(message), Toast.LENGTH_LONG).show()
+        Toast.makeText(context, context.getString(message), Toast.LENGTH_SHORT).show()
     }
 
     /**
      * Shows toast
      */
     fun showToast(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

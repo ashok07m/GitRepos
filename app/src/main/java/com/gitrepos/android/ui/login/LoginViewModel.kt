@@ -56,10 +56,10 @@ class LoginViewModel(private val context: Context, private val loginRepository: 
 
     // A placeholder username validation check
     private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains('@')) {
+        return if (username.isNotBlank() && username.contains('@')) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
         } else {
-            username.isNotBlank()
+            false
         }
     }
 
