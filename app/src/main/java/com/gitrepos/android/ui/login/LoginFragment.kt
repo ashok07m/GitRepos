@@ -10,9 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.gitrepos.android.R
-import com.gitrepos.android.data.utils.AppUtils
 import com.gitrepos.android.internal.afterTextChanged
 import com.gitrepos.android.internal.hideKeyboard
+import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.MainActivity
 import com.gitrepos.android.ui.login.model.LoggedInUserView
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -112,7 +112,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        AppUtils.showToast(context!!, errorString)
+        showToast(errorString)
     }
 
     /**
@@ -123,6 +123,6 @@ class LoginFragment : Fragment() {
 
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
-        AppUtils.showToast(context!!, "$welcome $displayName")
+        showToast("$welcome $displayName")
     }
 }

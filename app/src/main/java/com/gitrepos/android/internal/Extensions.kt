@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.
@@ -29,4 +31,18 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+/**
+ * Shows toast
+ */
+fun Fragment.showToast(message: Int) {
+    Toast.makeText(context, context?.getString(message), Toast.LENGTH_SHORT).show()
+}
+
+/**
+ * Shows toast
+ */
+fun Fragment.showToast(message: String) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

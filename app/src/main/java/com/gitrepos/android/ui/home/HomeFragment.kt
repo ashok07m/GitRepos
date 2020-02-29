@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gitrepos.android.R
-import com.gitrepos.android.data.utils.AppUtils
+import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
@@ -78,7 +78,7 @@ class HomeFragment : Fragment() {
      * Observer to observe the error message
      */
     private val errorObserver: Observer<Int> = Observer {
-        AppUtils.showToast(context!!, it)
+        showToast(it)
     }
 
     /**

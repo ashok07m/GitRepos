@@ -5,7 +5,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.gitrepos.android.R
-import com.gitrepos.android.data.utils.AppUtils
+import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.MainActivity
 import org.koin.android.ext.android.inject
 
@@ -44,7 +44,7 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
         return when (preference?.key) {
             getString(R.string.pref_key_logout) -> {
                 settingsViewModel.logOut()
-                AppUtils.showToast(context!!, R.string.message_logout_success)
+                showToast(R.string.message_logout_success)
                 findNavController().navigate(R.id.navigation_login)
                 true
             }

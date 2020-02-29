@@ -13,7 +13,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.gitrepos.android.R
 import com.gitrepos.android.data.database.entity.ReposEntity
-import com.gitrepos.android.data.utils.AppUtils
+import com.gitrepos.android.internal.showToast
 import kotlinx.android.synthetic.main.fragment_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -80,7 +80,7 @@ class DetailsFragment : Fragment() {
         } else {
             R.string.msg_unable_to_save_repo
         }
-        AppUtils.showToast(context!!, message)
+        showToast(message)
     }
 
     /**
