@@ -1,22 +1,20 @@
 package com.gitrepos.android.ui.login
 
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.gitrepos.android.R
 import com.gitrepos.android.data.utils.AppUtils
+import com.gitrepos.android.internal.afterTextChanged
+import com.gitrepos.android.internal.hideKeyboard
+import com.gitrepos.android.ui.MainActivity
+import com.gitrepos.android.ui.login.model.LoggedInUserView
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -106,37 +104,25 @@ class LoginFragment : Fragment() {
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
-        val directions = LoginFragmentDirections.actionLoginFragmentToNavigationHome(model)
         view?.let {
+            updateLoggedInUser(model)
             activity?.hideKeyboard(it)
-            it.findNavController()?.navigate(directions)
+            it.findNavController().navigate(R.id.navigation_home)
         }
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         AppUtils.showToast(context!!, errorString)
     }
-}
 
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
+    /**
+     *  Set loggedIn info in MainActivity and display loggedIn user
+     */
+    private fun updateLoggedInUser(model: LoggedInUserView) {
+        (activity as MainActivity).setLoggedInUser(model)
 
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
-}
-
-/**
- * Extension function to hide the keyboard
- */
-fun Context.hideKeyboard(view: View) {
-    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        val welcome = getString(R.string.welcome)
+        val displayName = model.displayName
+        AppUtils.showToast(context!!, "$welcome $displayName")
+    }
 }

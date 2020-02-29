@@ -26,7 +26,7 @@ class DatabaseRepositoryImpl(private val reposDao: ReposDao) : DatabaseRepositor
                 val repo =
                     Repo(
                         entity.avatarUrl, entity.owner, entity.title,
-                        "", entity.description, entity.language
+                        "${entity.owner}/${entity.title}", entity.description, entity.language
                     )
                 itemList.add(RepoItem(repo))
             }

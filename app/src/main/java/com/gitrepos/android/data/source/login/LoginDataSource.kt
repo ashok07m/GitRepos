@@ -31,8 +31,8 @@ class LoginDataSource {
                             result =
                                 LoginResult.Success(
                                     LoggedInUser(
-                                        user?.email,
-                                        user?.displayName
+                                        user.email,
+                                        user.displayName
                                     )
                                 )
                         }

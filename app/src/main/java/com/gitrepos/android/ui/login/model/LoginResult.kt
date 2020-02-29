@@ -1,4 +1,4 @@
-package com.gitrepos.android.ui.login
+package com.gitrepos.android.ui.login.model
 
 /**
  * Authentication result : success (user details) or error message.

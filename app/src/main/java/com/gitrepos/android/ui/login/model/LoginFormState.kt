@@ -1,4 +1,4 @@
-package com.gitrepos.android.ui.login
+package com.gitrepos.android.ui.login.model
 
 /**
  * Data validation state of the login form.

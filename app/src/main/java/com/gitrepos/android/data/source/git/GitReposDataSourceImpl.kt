@@ -28,9 +28,9 @@ class GitReposDataSourceImpl(private val gitApiService: GitApiService) :
             } catch (e: Exception) {
                 Log.e("GitReposDataSourceImpl", "Exception :$e")
                 if (e is NoConnectivityException || e is UnknownHostException || e is ConnectException) {
-                    GitResult.Error(ErrorCodes.NoConnectivityError, e?.message)
+                    GitResult.Error(ErrorCodes.NoConnectivityError, e.message)
                 } else {
-                    GitResult.Error(ErrorCodes.ServerError, e?.message)
+                    GitResult.Error(ErrorCodes.ServerError, e.message)
                 }
             }
         }
@@ -54,9 +54,9 @@ class GitReposDataSourceImpl(private val gitApiService: GitApiService) :
             } catch (e: Exception) {
                 Log.e("GitReposDataSourceImpl", "Exception :$e")
                 if (e is NoConnectivityException || e is UnknownHostException || e is ConnectException) {
-                    GitResult.Error(ErrorCodes.NoConnectivityError, e?.message)
+                    GitResult.Error(ErrorCodes.NoConnectivityError, e.message)
                 } else {
-                    GitResult.Error(ErrorCodes.ServerError, e?.message)
+                    GitResult.Error(ErrorCodes.ServerError, e.message)
                 }
             }
         }

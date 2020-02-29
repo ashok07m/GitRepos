@@ -24,9 +24,6 @@
         <action
             android:id="@+id/action_navigation_home_to_detailsFragment"
             app:destination="@id/navigation_details" />
-        <argument
-            android:name="loginInfo"
-            app:argType="com.gitrepos.android.ui.login.LoggedInUserView" />
     </fragment>
 
     <fragment
@@ -47,7 +44,8 @@
         <action
             android:id="@+id/action_navigation_settings_to_navigation_login"
             app:destination="@id/navigation_login"
-            app:launchSingleTop="true" />
+            app:launchSingleTop="true"
+            app:popExitAnim="@anim/fragment_fast_out_extra_slow_in" />
     </fragment>
 
     <fragment

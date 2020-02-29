@@ -9,6 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.gitrepos.android.R
 import com.gitrepos.android.data.repositories.LoginRepository
 import com.gitrepos.android.data.source.login.LoginResult.Success
+import com.gitrepos.android.ui.login.model.LoggedInUserView
+import com.gitrepos.android.ui.login.model.LoginFormState
+import com.gitrepos.android.ui.login.model.LoginResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
@@ -37,7 +40,8 @@ class LoginViewModel(private val context: Context, private val loginRepository: 
                     )
                 )
         } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+            _loginResult.value =
+                LoginResult(error = R.string.login_failed)
         }
     }
 
@@ -46,11 +50,14 @@ class LoginViewModel(private val context: Context, private val loginRepository: 
      */
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
+            _loginForm.value =
+                LoginFormState(usernameError = R.string.invalid_username)
         } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
+            _loginForm.value =
+                LoginFormState(passwordError = R.string.invalid_password)
         } else {
-            _loginForm.value = LoginFormState(isDataValid = true)
+            _loginForm.value =
+                LoginFormState(isDataValid = true)
         }
     }
 
@@ -80,7 +87,11 @@ class LoginViewModel(private val context: Context, private val loginRepository: 
                 it.displayName!!
             else
                 context.getString(R.string.user)
-            userdata.value = LoggedInUserView(email, displayName)
+            userdata.value =
+                LoggedInUserView(
+                    email,
+                    displayName
+                )
             return userdata
         }
 

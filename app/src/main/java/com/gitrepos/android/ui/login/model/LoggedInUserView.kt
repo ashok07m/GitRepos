@@ -1,4 +1,4 @@
-package com.gitrepos.android.ui.login
+package com.gitrepos.android.ui.login.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
