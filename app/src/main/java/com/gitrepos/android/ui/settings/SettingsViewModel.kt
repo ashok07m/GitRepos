@@ -1,13 +1,17 @@
 package com.gitrepos.android.ui.settings
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.gitrepos.android.data.repositories.DatabaseRepository
+import com.google.firebase.auth.FirebaseAuth
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(
+    private val dbRepository: DatabaseRepository
+) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+    /**
+     * Logout user
+     */
+    fun logOut() {
+        FirebaseAuth.getInstance().signOut()
     }
-    val text: LiveData<String> = _text
 }

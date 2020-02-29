@@ -26,4 +26,11 @@
     <string name="msg_unable_to_save_repo">Repository already saved / Unable to save</string>
     <string name="user">User</string>
     <string name="unknown">Unknown</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="biometric_title">Biometric login</string>
+    <string name="biometric_summary_on">Enabled</string>
+    <string name="biometric_summary_off">Disabled</string>
+    <string name="logout_title">Logout</string>
+    <string name="message_logout_success">Logged out successfully</string>
 </resources>

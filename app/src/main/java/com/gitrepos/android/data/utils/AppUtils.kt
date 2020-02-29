@@ -4,9 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.widget.Toast
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
 
 /**
  * @author Created by kuashok on 2019-10-05
@@ -34,5 +31,12 @@ object AppUtils {
      */
     fun showToast(context: Context, message: Int) {
         Toast.makeText(context, context.getString(message), Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * Shows toast
+     */
+    fun showToast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
 }

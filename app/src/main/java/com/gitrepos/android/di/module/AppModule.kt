@@ -16,6 +16,7 @@ import com.gitrepos.android.ui.details.DetailsViewModel
 import com.gitrepos.android.ui.home.HomeViewModel
 import com.gitrepos.android.ui.login.LoginViewModel
 import com.gitrepos.android.ui.repos.ReposViewModel
+import com.gitrepos.android.ui.settings.SettingsViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -59,4 +60,6 @@ val appModule = module {
     viewModel { DetailsViewModel(get(), get()) }
 
     viewModel { ReposViewModel(get()) }
+
+    viewModel { SettingsViewModel(get()) }
 }

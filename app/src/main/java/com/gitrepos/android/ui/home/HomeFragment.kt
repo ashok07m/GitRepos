@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -63,7 +62,7 @@ class HomeFragment : Fragment() {
 
         val welcome = getString(R.string.welcome)
         val displayName = args.loginInfo.displayName
-        Toast.makeText(context, "$welcome $displayName", Toast.LENGTH_LONG).show()
+        AppUtils.showToast(context!!, "$welcome $displayName")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

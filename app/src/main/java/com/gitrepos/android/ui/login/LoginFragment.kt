@@ -1,5 +1,7 @@
 package com.gitrepos.android.ui.login
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.StringRes
@@ -105,8 +108,10 @@ class LoginFragment : Fragment() {
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val directions = LoginFragmentDirections.actionLoginFragmentToNavigationHome(model)
-        view?.findNavController()?.navigate(directions)
-
+        view?.let {
+            activity?.hideKeyboard(it)
+            it.findNavController()?.navigate(directions)
+        }
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
@@ -127,5 +132,12 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
+}
 
+/**
+ * Extension function to hide the keyboard
+ */
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }

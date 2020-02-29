@@ -2,4 +2,7 @@
 <resources>
     <string name="base_url_git_repos" translatable="false">https://api.github.com</string>
     <string name="authToken" translatable="false">4a2f78805910445ea3ff04f65eeacf07f824985d</string>
+
+    <string name="pref_key_logout" translatable="false">logout</string>
+    <string name="pref_key_fp_login" translatable="false">fp_login</string>
 </resources>

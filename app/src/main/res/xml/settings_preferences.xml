@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="@string/pref_key_fp_login"
+        app:summaryOff="@string/biometric_summary_off"
+        app:summaryOn="@string/biometric_summary_on"
+        app:title="@string/biometric_title" />
+
+    <Preference
+        app:key="@string/pref_key_logout"
+        app:summary="loggedIn user"
+        app:title="@string/logout_title" />
+
+</PreferenceScreen>
