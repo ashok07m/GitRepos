@@ -4,19 +4,39 @@ import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import com.gitrepos.android.R
+import com.gitrepos.android.data.persistence.PreferenceManger
 import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.MainActivity
 import org.koin.android.ext.android.inject
 
-class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
+class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener,
+    Preference.OnPreferenceChangeListener {
 
     private val settingsViewModel: SettingsViewModel by inject()
+    private val preferenceManager: PreferenceManger by inject()
+
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_preferences, rootKey)
 
         initLogoutSummary()
+        initFPLoginStatus()
+    }
+
+    /**
+     * Updates fp login switch status
+     */
+    private fun initFPLoginStatus() {
+        val status = preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
+        val fpLoginPref: SwitchPreferenceCompat? =
+            findPreference(getString(R.string.pref_key_fp_login))
+        fpLoginPref?.apply {
+            setDefaultValue(status)
+            isChecked = status
+            onPreferenceChangeListener = this@SettingFragment
+        }
     }
 
     /**
@@ -48,7 +68,17 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
                 findNavController().navigate(R.id.navigation_login)
                 true
             }
+            else -> {
+                false
+            }
+        }
+    }
+
+    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+        return when (preference?.key) {
             getString(R.string.pref_key_fp_login) -> {
+                val isChecked = newValue as Boolean
+                preferenceManager.putBooleanValue(getString(R.string.pref_key_fp_login), isChecked)
                 true
             }
             else -> {

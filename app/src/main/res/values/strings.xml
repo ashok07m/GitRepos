@@ -30,4 +30,22 @@
     <string name="biometric_summary_off">Disabled</string>
     <string name="logout_title">Logout</string>
     <string name="message_logout_success">Logged out successfully</string>
+    <string name="label_authenticate">Authenticate</string>
+    <string name="label_app_requires_bio_auth">App requires fingerprint authentication</string>
+    <string name="label_app_security_requires_auth">Your information is secured and needs fingerprint authentication to access it</string>
+    <string name="label_cancel">Cancel</string>
+
+    <string name="label_use_fingerprint_in_future">Use fingerprint in the future</string>
+    <string name="msg_register_fingerprint">
+        Go to \'Settings -> Security -> Fingerprint\' and register at least one fingerprint
+    </string>
+    <string name="msg_setup_lock_screen">
+        Secure lock screen hasn\'t set been up.\n
+        Go to \'Settings -> Security -> Fingerprint\' to set up a fingerprint or face
+    </string>
+    <string name="msg_new_fingerprint_enrolled">
+        A new fingerprint was added to this device, your saved app data is wiped out.
+    </string>
+    <string name="msg_fingerprint_hardware_unavailable">Fingerprint hardware is currently not available to use</string>
+    <string name="msg_no_fp_sensor_on_device">Fingerprint hardware doesn\'t exists on device</string>
 </resources>

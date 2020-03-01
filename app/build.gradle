@@ -16,7 +16,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.gitrepos.android"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -94,19 +94,21 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
-    // firebase
+    // Firebase
     implementation "com.google.firebase:firebase-auth:$firebase_auth_version"
+    // Firebase play services version
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$firebase_play_services_version"
 
-    // glide
+    // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
-    // debug sqlite
+    // Debug sqlite
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 
-    // firebase play services version
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$firebase_play_services_version"
-
-    // preference
+    // Preference
     implementation "androidx.preference:preference-ktx:$preference_version"
+
+    // Biometric
+    implementation "androidx.biometric:biometric:$biometric_version"
 }

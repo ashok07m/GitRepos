@@ -1,4 +1,4 @@
-package com.gitrepos.android.di.module
+package com.gitrepos.android.di
 
 import com.gitrepos.android.R
 import com.gitrepos.android.data.database.AppDatabase
@@ -8,6 +8,7 @@ import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptor
 import com.gitrepos.android.data.network.interceptor.AuthTokenInterceptorImpl
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptor
 import com.gitrepos.android.data.network.interceptor.ConnectivityInterceptorImpl
+import com.gitrepos.android.data.persistence.PreferenceManger
 import com.gitrepos.android.data.repositories.*
 import com.gitrepos.android.data.source.git.GitReposDataSource
 import com.gitrepos.android.data.source.git.GitReposDataSourceImpl
@@ -62,4 +63,6 @@ val appModule = module {
     viewModel { ReposViewModel(get()) }
 
     viewModel { SettingsViewModel(get()) }
+
+    single { PreferenceManger(get()) }
 }

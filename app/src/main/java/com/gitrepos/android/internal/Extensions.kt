@@ -8,6 +8,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 /**
@@ -45,4 +46,19 @@ fun Fragment.showToast(message: Int) {
  */
 fun Fragment.showToast(message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+}
+
+/**
+ * Shows toast
+ */
+fun AppCompatActivity.showToast(message: Int) {
+    Toast.makeText(applicationContext, applicationContext?.getString(message), Toast.LENGTH_SHORT)
+        .show()
+}
+
+/**
+ * Shows toast
+ */
+fun AppCompatActivity.showToast(message: String) {
+    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }
