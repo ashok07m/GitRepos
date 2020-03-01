@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val isEnabledFPLogin =
             preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
         if (isEnabledFPLogin && (getCurrentFragment() is LoginFragment)) {
-            group.isEnabled = false
+            group.visibility = View.INVISIBLE
             bioAuthManager.authenticate()
         }
     }

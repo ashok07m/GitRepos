@@ -1,13 +1,11 @@
 package com.gitrepos.android.ui.settings
 
 import android.os.Bundle
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.gitrepos.android.R
 import com.gitrepos.android.data.persistence.PreferenceManger
-import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.MainActivity
 import org.koin.android.ext.android.inject
 
@@ -63,9 +61,12 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
     override fun onPreferenceClick(preference: Preference?): Boolean {
         return when (preference?.key) {
             getString(R.string.pref_key_logout) -> {
+                // disabled as user should not be logged out
+                /*
                 settingsViewModel.logOut()
                 showToast(R.string.message_logout_success)
                 findNavController().navigate(R.id.navigation_login)
+                */
                 true
             }
             else -> {
