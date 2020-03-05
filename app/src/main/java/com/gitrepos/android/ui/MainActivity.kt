@@ -99,11 +99,11 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-        txtMessage?.text = errString
+        sharedViewModel.setBioAuthMessage(errString.toString())
     }
 
     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        txtMessage?.text = ""
+        sharedViewModel.setBioAuthMessage("")
         val currentFragment = getCurrentFragment()
         if (currentFragment is LoginFragment) {
             sharedViewModel.getLoggedInUser()?.let {
@@ -118,19 +118,19 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onKeyInvalidated() {
-        txtMessage?.text = getString(R.string.msg_new_fingerprint_enrolled)
+        sharedViewModel.setBioAuthMessage(getString(R.string.msg_new_fingerprint_enrolled))
     }
 
     override fun onFingerPrintsNotEnrolled() {
-        txtMessage?.text = getString(R.string.msg_register_fingerprint)
+        sharedViewModel.setBioAuthMessage(getString(R.string.msg_register_fingerprint))
     }
 
     override fun onFingerPrintHardwareUnavailable() {
-        txtMessage?.text = getString(R.string.msg_fingerprint_hardware_unavailable)
+        sharedViewModel.setBioAuthMessage(getString(R.string.msg_fingerprint_hardware_unavailable))
     }
 
     override fun onNoFingerPrintSensorOnDevice() {
-        txtMessage?.text = getString(R.string.msg_no_fp_sensor_on_device)
+        sharedViewModel.setBioAuthMessage(getString(R.string.msg_no_fp_sensor_on_device))
     }
 
     /**

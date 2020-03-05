@@ -17,6 +17,8 @@ import com.gitrepos.android.internal.hideKeyboard
 import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.SharedViewModel
 import com.gitrepos.android.ui.login.model.LoggedInUserView
+import com.gitrepos.android.ui.login.model.LoginFormState
+import com.gitrepos.android.ui.login.model.LoginResult
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -40,47 +42,8 @@ class LoginFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // check user's current logged status
-        loginViewModel.getCurrentLoggedInUser()?.observe(viewLifecycleOwner,
-            Observer {
-                it?.let {
-                    val isEnabledFPLogin =
-                        preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-                    sharedViewModel.setLoggedInUser(it)
-                    if (!isEnabledFPLogin) {
-                        updateUiWithUser(it)
-                    }
-                }
-            })
-
-
-        loginViewModel.loginFormState.observe(viewLifecycleOwner, Observer {
-            val loginState = it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            btnLogin.isEnabled = loginState.isDataValid
-
-            if (loginState.usernameError != null) {
-                etUsername.error = getString(loginState.usernameError)
-            }
-            if (loginState.passwordError != null) {
-                etPassword.error = getString(loginState.passwordError)
-            }
-        })
-
-        loginViewModel.loginResult.observe(viewLifecycleOwner, Observer {
-            val loginResult = it ?: return@Observer
-
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                sharedViewModel.setLoggedInUser(loginResult.success)
-                updateUiWithUser(loginResult.success)
-            }
-
-        })
+        val status = preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
+        swFpEnable.isChecked = status
 
         etUsername.afterTextChanged {
             loginViewModel.loginDataChanged(
@@ -113,8 +76,11 @@ class LoginFragment : Fragment() {
             loginViewModel.login(etUsername.text.toString(), etPassword.text.toString())
         }
 
-        val status = preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-        swFpEnable.isChecked = status
+
+        loginViewModel.getCurrentLoggedInUser()?.observe(viewLifecycleOwner, loggedInUserObserver)
+        loginViewModel.loginFormState.observe(viewLifecycleOwner, loginFormStateObserver)
+        loginViewModel.loginResult.observe(viewLifecycleOwner, loginResultObserver)
+        sharedViewModel.biAuthMsgLiveData.observe(viewLifecycleOwner, bioAuthMessageObserver)
 
     }
 
@@ -142,5 +108,48 @@ class LoginFragment : Fragment() {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         showToast("$welcome $displayName")
+    }
+
+    private val loginFormStateObserver: Observer<LoginFormState> = Observer {
+        val loginState = it ?: return@Observer
+
+        // disable login button unless both username / password is valid
+        btnLogin.isEnabled = loginState.isDataValid
+
+        if (loginState.usernameError != null) {
+            etUsername.error = getString(loginState.usernameError)
+        }
+        if (loginState.passwordError != null) {
+            etPassword.error = getString(loginState.passwordError)
+        }
+    }
+
+    private val loginResultObserver: Observer<LoginResult> = Observer {
+        val loginResult = it ?: return@Observer
+
+        loading.visibility = View.GONE
+        if (loginResult.error != null) {
+            showLoginFailed(loginResult.error)
+        }
+        if (loginResult.success != null) {
+            sharedViewModel.setLoggedInUser(loginResult.success)
+            updateUiWithUser(loginResult.success)
+        }
+
+    }
+
+    private val loggedInUserObserver: Observer<LoggedInUserView> = Observer {
+        it?.let {
+            val isEnabledFPLogin =
+                preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
+            sharedViewModel.setLoggedInUser(it)
+            if (!isEnabledFPLogin) {
+                updateUiWithUser(it)
+            }
+        }
+    }
+
+    private val bioAuthMessageObserver: Observer<String> = Observer {
+        txtMessage.text = it
     }
 }

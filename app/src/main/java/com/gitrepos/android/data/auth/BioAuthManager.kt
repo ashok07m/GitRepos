@@ -35,8 +35,6 @@ class BioAuthManager(
         createKey(DEFAULT_KEY_NAME)
         DEFAULT_KEY_NAME
     }
-    lateinit var encCipher: Cipher
-    private var cryptoObject: BiometricPrompt.CryptoObject? = null
 
 
     init {
@@ -204,11 +202,6 @@ class BioAuthManager(
                 super.onAuthenticationSucceeded(result)
                 Log.d(TAG, "Authentication was successful")
                 bioAuthCallBacks.onAuthenticationSucceeded(result)
-                cryptoObject = result.cryptoObject
-                cryptoObject?.cipher?.let {
-                    val enc = encryptData("test")
-                    decryptData(enc!!)
-                }
             }
         }
 
@@ -241,7 +234,7 @@ class BioAuthManager(
         when (canAuthenticate) {
 
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                encCipher = getCipher()
+                val encCipher = getCipher()
                 if (initCipher(cipher = encCipher, keyName = keyName)) {
                     biometricPrompt.authenticate(
                         promptInfo,
@@ -321,12 +314,7 @@ class BioAuthManager(
     fun decryptData(encryptedInput: String): String? {
         try {
             val cipher = getCipher()
-            if (initCipher(
-                    cipher = cipher,
-                    keyName = keyName,
-                    mode = Cipher.DECRYPT_MODE
-                )
-            ) {
+            if (initCipher(cipher = cipher, keyName = keyName, mode = Cipher.DECRYPT_MODE)) {
                 Log.d(TAG, "decryptData() : encryptedInput :$encryptedInput")
                 val encryptedBytes = Base64.decode(encryptedInput, Base64.DEFAULT)
                 val decryptedBytes = cipher.doFinal(encryptedBytes)

@@ -1,5 +1,6 @@
 package com.gitrepos.android.ui
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.gitrepos.android.data.auth.BioAuthManager
 import com.gitrepos.android.ui.login.model.LoggedInUserView
@@ -8,6 +9,8 @@ class SharedViewModel : ViewModel() {
 
     private lateinit var bioAuthManager: BioAuthManager
     private var loggedInUserView: LoggedInUserView? = null
+    private val bioAuthMsgMutableLiveData = MutableLiveData<String>().apply { "" }
+    val biAuthMsgLiveData = bioAuthMsgMutableLiveData
 
     /**
      * Sets auth manager instance
@@ -38,6 +41,13 @@ class SharedViewModel : ViewModel() {
         return loggedInUserView
     }
 
+
+    /**
+     * Sets the messages received from bio authentication
+     */
+    fun setBioAuthMessage(message: String) {
+        bioAuthMsgMutableLiveData.value = message
+    }
 
     companion object {
         const val TAG = "SharedViewModel"
