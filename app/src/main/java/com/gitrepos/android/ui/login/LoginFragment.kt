@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.gitrepos.android.R
@@ -14,7 +15,7 @@ import com.gitrepos.android.data.persistence.PreferenceManger
 import com.gitrepos.android.internal.afterTextChanged
 import com.gitrepos.android.internal.hideKeyboard
 import com.gitrepos.android.internal.showToast
-import com.gitrepos.android.ui.MainActivity
+import com.gitrepos.android.ui.SharedViewModel
 import com.gitrepos.android.ui.login.model.LoggedInUserView
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.android.ext.android.inject
@@ -23,6 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class LoginFragment : Fragment() {
 
     private val loginViewModel: LoginViewModel by viewModel()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val preferenceManager: PreferenceManger by inject()
 
     override fun onCreateView(
@@ -44,7 +46,7 @@ class LoginFragment : Fragment() {
                 it?.let {
                     val isEnabledFPLogin =
                         preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-                    (activity as MainActivity).setLoggedInUser(it)
+                    sharedViewModel.setLoggedInUser(it)
                     if (!isEnabledFPLogin) {
                         updateUiWithUser(it)
                     }
@@ -74,7 +76,7 @@ class LoginFragment : Fragment() {
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
-                (activity as MainActivity).setLoggedInUser(loginResult.success)
+                sharedViewModel.setLoggedInUser(loginResult.success)
                 updateUiWithUser(loginResult.success)
             }
 
@@ -107,13 +109,6 @@ class LoginFragment : Fragment() {
         }
 
         btnLogin.setOnClickListener {
-            val isEnabledFPLogin = swFpEnable.isChecked
-
-            preferenceManager.putBooleanValue(
-                getString(R.string.pref_key_fp_login),
-                isEnabledFPLogin
-            )
-
             loading.visibility = View.VISIBLE
             loginViewModel.login(etUsername.text.toString(), etPassword.text.toString())
         }
@@ -125,6 +120,11 @@ class LoginFragment : Fragment() {
 
     fun updateUiWithUser(model: LoggedInUserView) {
         view?.let {
+            val isEnabledFPLogin = swFpEnable.isChecked
+            preferenceManager.putBooleanValue(
+                getString(R.string.pref_key_fp_login),
+                isEnabledFPLogin
+            )
             updateLoggedInUser(model)
             activity?.hideKeyboard(it)
             it.findNavController().navigate(R.id.navigation_home)

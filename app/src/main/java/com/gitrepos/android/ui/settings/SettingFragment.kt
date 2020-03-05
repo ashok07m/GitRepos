@@ -1,12 +1,13 @@
 package com.gitrepos.android.ui.settings
 
 import android.os.Bundle
+import androidx.fragment.app.activityViewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.gitrepos.android.R
 import com.gitrepos.android.data.persistence.PreferenceManger
-import com.gitrepos.android.ui.MainActivity
+import com.gitrepos.android.ui.SharedViewModel
 import org.koin.android.ext.android.inject
 
 class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener,
@@ -14,6 +15,7 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
 
     private val settingsViewModel: SettingsViewModel by inject()
     private val preferenceManager: PreferenceManger by inject()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -42,7 +44,7 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
      */
     private fun initLogoutSummary() {
         val logoutSummary: Preference? = findPreference(getString(R.string.pref_key_logout))
-        val loggedInUser = (activity as MainActivity).getLoggedInUser()
+        val loggedInUser = sharedViewModel.getLoggedInUser()
         var summaryText = logoutSummary?.summary
         loggedInUser?.let {
             summaryText = if (it.email.isNotEmpty()) {

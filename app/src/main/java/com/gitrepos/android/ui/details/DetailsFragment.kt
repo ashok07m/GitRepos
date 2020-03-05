@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -14,6 +15,8 @@ import com.bumptech.glide.signature.ObjectKey
 import com.gitrepos.android.R
 import com.gitrepos.android.data.database.entity.ReposEntity
 import com.gitrepos.android.internal.showToast
+import com.gitrepos.android.ui.MainActivity
+import com.gitrepos.android.ui.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_details.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -21,12 +24,17 @@ import java.io.File
 class DetailsFragment : Fragment() {
 
     private val detailsViewModel: DetailsViewModel by viewModel()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val args: DetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        activity?.run {
+            (this as MainActivity).doBioAUth()
+        }
 
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
@@ -59,7 +67,8 @@ class DetailsFragment : Fragment() {
                 description = repo.description,
                 language = txtLangValue.text.toString()
             )
-            detailsViewModel.saveRepoDetails(reposEntity)
+
+            detailsViewModel.saveRepoDetails(reposEntity, sharedViewModel.getBioAuthManager())
                 .observe(viewLifecycleOwner, saveResultObserver)
         }
     }

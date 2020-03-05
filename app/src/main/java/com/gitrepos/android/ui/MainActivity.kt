@@ -2,6 +2,7 @@ package com.gitrepos.android.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
@@ -16,8 +17,8 @@ import com.gitrepos.android.data.auth.AuthDialogBuilder
 import com.gitrepos.android.data.auth.BioAuthCallBacks
 import com.gitrepos.android.data.auth.BioAuthManager
 import com.gitrepos.android.data.persistence.PreferenceManger
+import com.gitrepos.android.ui.details.DetailsFragment
 import com.gitrepos.android.ui.login.LoginFragment
-import com.gitrepos.android.ui.login.model.LoggedInUserView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -26,8 +27,8 @@ import org.koin.android.ext.android.inject
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener,
     BioAuthCallBacks {
 
-    private var loggedInUserView: LoggedInUserView? = null
     private val preferenceManager: PreferenceManger by inject()
+    private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var navController: NavController
 
     // Auth dialog information
@@ -55,8 +56,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home,
@@ -69,6 +68,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener(this)
+
+        // set auth manager in shared viewmodel
+        sharedViewModel.setBioAuthManager(bioAuthManager)
     }
 
     override fun onResume() {
@@ -76,12 +78,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         // check bio auth status
         bioAuthManager.canAuthenticate()
 
-        val isEnabledFPLogin =
-            preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-        if (isEnabledFPLogin && (getCurrentFragment() is LoginFragment)) {
-            group.visibility = View.INVISIBLE
-            bioAuthManager.authenticate()
-        }
+        doBioAUth()
     }
 
     override fun onDestinationChanged(
@@ -101,39 +98,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
-    /**
-     * Gets current visible fragment
-     */
-    private fun getCurrentFragment(): Fragment? {
-        return supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.get(
-            0
-        )
-    }
-
-    /**
-     * Sets loggedIn user info in activity
-     */
-    fun setLoggedInUser(loggedInUserView: LoggedInUserView) {
-        this.loggedInUserView = loggedInUserView
-    }
-
-    /**
-     * Gets logged in user info
-     */
-    fun getLoggedInUser(): LoggedInUserView? {
-        return loggedInUserView
-    }
-
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-        txtMessage.text = errString
+        txtMessage?.text = errString
     }
 
     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        txtMessage.text = ""
+        txtMessage?.text = ""
         val currentFragment = getCurrentFragment()
         if (currentFragment is LoginFragment) {
-            loggedInUserView?.let {
-                currentFragment.updateUiWithUser(loggedInUserView!!)
+            sharedViewModel.getLoggedInUser()?.let {
+                currentFragment.updateUiWithUser(it)
             }
         }
     }
@@ -144,18 +118,39 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onKeyInvalidated() {
-        txtMessage.text = getString(R.string.msg_new_fingerprint_enrolled)
+        txtMessage?.text = getString(R.string.msg_new_fingerprint_enrolled)
     }
 
     override fun onFingerPrintsNotEnrolled() {
-        txtMessage.text = getString(R.string.msg_register_fingerprint)
+        txtMessage?.text = getString(R.string.msg_register_fingerprint)
     }
 
     override fun onFingerPrintHardwareUnavailable() {
-        txtMessage.text = getString(R.string.msg_fingerprint_hardware_unavailable)
+        txtMessage?.text = getString(R.string.msg_fingerprint_hardware_unavailable)
     }
 
     override fun onNoFingerPrintSensorOnDevice() {
-        txtMessage.text = getString(R.string.msg_no_fp_sensor_on_device)
+        txtMessage?.text = getString(R.string.msg_no_fp_sensor_on_device)
+    }
+
+    /**
+     * Gets current visible fragment
+     */
+    private fun getCurrentFragment(): Fragment? {
+        return supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments?.get(
+            0
+        )
+    }
+
+    /**
+     * Performs bio authentication
+     */
+    fun doBioAUth() {
+        val isEnabledFPLogin =
+            preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
+        if (isEnabledFPLogin && (getCurrentFragment() is LoginFragment || getCurrentFragment() is DetailsFragment)) {
+            group?.visibility = View.INVISIBLE
+            bioAuthManager.authenticate()
+        }
     }
 }
