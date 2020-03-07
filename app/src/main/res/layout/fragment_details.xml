@@ -115,9 +115,9 @@
         app:layout_constraintTop_toBottomOf="@+id/txtLanguage"
         app:layout_constraintVertical_bias="0.0" />
 
-    <Button
-        android:id="@+id/btnSave"
+    <com.google.android.material.button.MaterialButton
         style="@style/buttonBoldFilled"
+        android:id="@+id/btnSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

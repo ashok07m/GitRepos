@@ -13,6 +13,8 @@
         <action
             android:id="@+id/action_loginFragment_to_navigation_home"
             app:destination="@id/navigation_home"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/navigation_login"
             app:popUpToInclusive="true" />
     </fragment>
 
@@ -45,7 +47,9 @@
             android:id="@+id/action_navigation_settings_to_navigation_login"
             app:destination="@id/navigation_login"
             app:launchSingleTop="true"
-            app:popExitAnim="@anim/fragment_fast_out_extra_slow_in" />
+            app:popExitAnim="@anim/fragment_fast_out_extra_slow_in"
+            app:popUpTo="@+id/navigation_login"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment

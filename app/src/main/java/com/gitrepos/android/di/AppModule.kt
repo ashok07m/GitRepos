@@ -13,7 +13,7 @@ import com.gitrepos.android.data.repositories.*
 import com.gitrepos.android.data.source.git.GitReposDataSource
 import com.gitrepos.android.data.source.git.GitReposDataSourceImpl
 import com.gitrepos.android.data.source.login.LoginDataSource
-import com.gitrepos.android.ui.SharedViewModel
+import com.gitrepos.android.ui.CommonViewModel
 import com.gitrepos.android.ui.details.DetailsViewModel
 import com.gitrepos.android.ui.home.HomeViewModel
 import com.gitrepos.android.ui.login.LoginViewModel
@@ -67,5 +67,5 @@ val appModule = module {
 
     single { PreferenceManger(get()) }
 
-    viewModel { SharedViewModel() }
+    viewModel { CommonViewModel(get(), get(), get(), get()) }
 }

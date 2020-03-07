@@ -49,4 +49,8 @@
     <string name="msg_fingerprint_hardware_unavailable">Fingerprint hardware is currently not available to use</string>
     <string name="msg_no_fp_sensor_on_device">Fingerprint hardware doesn\'t exists on device</string>
     <string name="logged_in_title">LoggedIn as</string>
+    <string name="label_ok">OK</string>
+    <string name="title_biometric_altered">Fingerprints Altered</string>
+    <string name="message_no_fp_enrolled">No biometric enrolled,your saved app data is wiped out.</string>
+    <string name="message_logout_restricted">Logut temporarily disabled</string>
 </resources>

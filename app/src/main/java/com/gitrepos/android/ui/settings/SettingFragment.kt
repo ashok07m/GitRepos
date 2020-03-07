@@ -1,21 +1,22 @@
 package com.gitrepos.android.ui.settings
 
 import android.os.Bundle
-import androidx.fragment.app.activityViewModels
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
 import com.gitrepos.android.R
 import com.gitrepos.android.data.persistence.PreferenceManger
-import com.gitrepos.android.ui.SharedViewModel
+import com.gitrepos.android.internal.showToast
+import com.gitrepos.android.ui.CommonViewModel
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener,
     Preference.OnPreferenceChangeListener {
 
     private val settingsViewModel: SettingsViewModel by inject()
     private val preferenceManager: PreferenceManger by inject()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val commonViewModel: CommonViewModel by sharedViewModel()
 
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -44,7 +45,7 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
      */
     private fun initLogoutSummary() {
         val logoutSummary: Preference? = findPreference(getString(R.string.pref_key_logout))
-        val loggedInUser = sharedViewModel.getLoggedInUser()
+        val loggedInUser = commonViewModel.getLoggedInUser()
         var summaryText = logoutSummary?.summary
         loggedInUser?.let {
             summaryText = if (it.email.isNotEmpty()) {
@@ -64,11 +65,15 @@ class SettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClick
         return when (preference?.key) {
             getString(R.string.pref_key_logout) -> {
                 // disabled as user should not be logged out
-                /*
-                settingsViewModel.logOut()
+
+                showToast(R.string.message_logout_restricted)
+
+                /*settingsViewModel.logOut()
                 showToast(R.string.message_logout_success)
-                findNavController().navigate(R.id.navigation_login)
-                */
+                view?.let {
+                    val directions = SettingFragmentDirections.actionNavigationSettingsToNavigationLogin()
+                    it.findNavController().navigate(directions)
+                }*/
                 true
             }
             else -> {

@@ -57,9 +57,12 @@ class BioAuthManager(
         activity.getString(R.string.pref_key_enc_data)
     }
 
+    private val initKeyStoreAndKeyGenerator by lazy {
+        setupKeyStoreAndKeyGenerator()
+    }
+
 
     init {
-        setupKeyStoreAndKeyGenerator()
 
         promptInfo = createPromptInfo(activity, authBuilder)
         biometricPrompt = createBiometricPrompt(activity)
@@ -86,16 +89,26 @@ class BioAuthManager(
                 else -> throw e
             }
         }
+        Log.d(TAG, "setupKeyStoreAndKeyGenerator")
     }
 
     /**
      * Gets key from keystore
      */
     private fun geSecretKey(): SecretKey {
+        initKeyStoreAndKeyGenerator
         keyStore.apply {
             load(null)
         }
         return keyStore.getKey(keyName, null) as SecretKey
+    }
+
+    private fun deleteSecretKey() {
+        keyStore.apply {
+            load(null)
+        }
+
+        keyStore.deleteEntry(KEY_ALIAS)
     }
 
     /**
@@ -271,47 +284,66 @@ class BioAuthManager(
         val canAuthenticate = BiometricManager.from(activity).canAuthenticate()
         Log.d(TAG, "authenticate() : canAuthenticate: $canAuthenticate")
 
-        when (canAuthenticate) {
+        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
 
+            val encCipher = getCipher()
+            val iv = preferenceManager.getStringValue(prefKeyIV)
+
+            if (!iv.isNullOrEmpty()) {
+                Log.d(TAG, "authenticate() : Decryption mode.")
+
+                val decodeBase64IV = Base64.decode(iv, Base64.DEFAULT)
+
+                if (initCipher(
+                        cipher = encCipher,
+                        iv = decodeBase64IV,
+                        mode = Cipher.DECRYPT_MODE
+                    )
+                ) {
+                    biometricPrompt.authenticate(
+                        promptInfo,
+                        BiometricPrompt.CryptoObject(encCipher)
+                    )
+                } else {
+                    Log.d(TAG, "authenticate() : unable to initialize the cipher.")
+                    bioAuthCallBacks.onKeyInvalidated()
+                }
+
+            } else {
+                Log.d(TAG, "authenticate() : Encryption mode.")
+
+                if (initCipher(cipher = encCipher)) {
+                    biometricPrompt.authenticate(
+                        promptInfo,
+                        BiometricPrompt.CryptoObject(encCipher)
+                    )
+                } else {
+                    Log.d(TAG, "authenticate() : unable to initialize the cipher.")
+                    bioAuthCallBacks.onKeyInvalidated()
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Check whether key is valid for authentication or not
+     */
+    fun canAuthenticate(): Boolean {
+        val canAuthenticate = BiometricManager.from(activity).canAuthenticate()
+        Log.d(TAG, "canAuthenticate() : canAuthenticate: $canAuthenticate")
+
+        when (canAuthenticate) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
 
                 val encCipher = getCipher()
-                val iv = preferenceManager.getStringValue(prefKeyIV)
-
-                if (!iv.isNullOrEmpty()) {
-                    Log.d(TAG, "authenticate() : Decryption mode.")
-
-                    val decodeBase64IV = Base64.decode(iv, Base64.DEFAULT)
-
-                    if (initCipher(
-                            cipher = encCipher,
-                            iv = decodeBase64IV,
-                            mode = Cipher.DECRYPT_MODE
-                        )
-                    ) {
-                        biometricPrompt.authenticate(
-                            promptInfo,
-                            BiometricPrompt.CryptoObject(encCipher)
-                        )
-                    } else {
-                        Log.d(TAG, "authenticate() : unable to initialize the cipher.")
-                        bioAuthCallBacks.onKeyInvalidated()
-                    }
-
+                if (initCipher(cipher = encCipher)) {
+                    return true
                 } else {
-                    Log.d(TAG, "authenticate() : Encryption mode.")
-
-                    if (initCipher(cipher = encCipher)) {
-                        biometricPrompt.authenticate(
-                            promptInfo,
-                            BiometricPrompt.CryptoObject(encCipher)
-                        )
-                    } else {
-                        Log.d(TAG, "authenticate() : unable to initialize the cipher.")
-                        bioAuthCallBacks.onKeyInvalidated()
-                    }
+                    Log.d(TAG, "canAuthenticate() : unable to initialize the cipher.")
+                    deleteSecretKey()
+                    bioAuthCallBacks.onKeyInvalidated()
                 }
-
             }
 
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
@@ -326,25 +358,7 @@ class BioAuthManager(
                 bioAuthCallBacks.onNoFingerPrintSensorOnDevice()
             }
         }
-    }
 
-    /**
-     * Check whether key is valid for authentication or not
-     */
-    fun canAuthenticate(): Boolean {
-        val canAuthenticate = BiometricManager.from(activity).canAuthenticate()
-        Log.d(TAG, "authenticate() : canAuthenticate: $canAuthenticate")
-
-        if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
-
-            val encCipher = getCipher()
-            if (initCipher(cipher = encCipher)) {
-                return true
-            } else {
-                Log.d(TAG, "authenticate() : unable to initialize the cipher.")
-                bioAuthCallBacks.onKeyInvalidated()
-            }
-        }
         return false
     }
 

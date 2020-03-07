@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface DatabaseRepository {
     suspend fun saveRepo(reposEntity: ReposEntity): Boolean
     suspend fun fetchSavedRepos(): Flow<List<RepoItem>>
+    suspend fun deleteAllData()
 }

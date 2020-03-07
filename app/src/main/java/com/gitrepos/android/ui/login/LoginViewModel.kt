@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gitrepos.android.R
 import com.gitrepos.android.data.repositories.LoginRepository
+import com.gitrepos.android.data.source.login.LoginResult.Error
 import com.gitrepos.android.data.source.login.LoginResult.Success
+import com.gitrepos.android.internal.NoConnectivityException
 import com.gitrepos.android.ui.login.model.LoggedInUserView
 import com.gitrepos.android.ui.login.model.LoginFormState
 import com.gitrepos.android.ui.login.model.LoginResult
@@ -40,8 +42,14 @@ class LoginViewModel(private val context: Context, private val loginRepository: 
                     )
                 )
         } else {
-            _loginResult.value =
-                LoginResult(error = R.string.login_failed)
+            val exception = (result as Error).exception
+            if (exception is NoConnectivityException) {
+                _loginResult.value =
+                    LoginResult(error = R.string.message_internet_unavailable)
+            } else {
+                _loginResult.value =
+                    LoginResult(error = R.string.login_failed)
+            }
         }
     }
 

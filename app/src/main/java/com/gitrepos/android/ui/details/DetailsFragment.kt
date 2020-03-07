@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
@@ -15,16 +14,17 @@ import com.bumptech.glide.signature.ObjectKey
 import com.gitrepos.android.R
 import com.gitrepos.android.data.database.entity.ReposEntity
 import com.gitrepos.android.internal.showToast
+import com.gitrepos.android.ui.CommonViewModel
 import com.gitrepos.android.ui.MainActivity
-import com.gitrepos.android.ui.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_details.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
 class DetailsFragment : Fragment() {
 
     private val detailsViewModel: DetailsViewModel by viewModel()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val commonViewModel: CommonViewModel by sharedViewModel()
     private val args: DetailsFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -32,7 +32,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        if (!sharedViewModel.isBioAuthenticated()) {
+        if (!commonViewModel.isBioAuthenticated()) {
             activity?.run {
                 (this as MainActivity).doBioAUth()
             }
@@ -70,7 +70,7 @@ class DetailsFragment : Fragment() {
                 language = txtLangValue.text.toString()
             )
 
-            detailsViewModel.saveRepoDetails(reposEntity, sharedViewModel.getBioAuthManager())
+            detailsViewModel.saveRepoDetails(reposEntity, commonViewModel.getBioAuthManager())
                 .observe(viewLifecycleOwner, saveResultObserver)
         }
     }

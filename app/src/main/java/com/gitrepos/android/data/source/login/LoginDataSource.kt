@@ -2,8 +2,10 @@ package com.gitrepos.android.data.source.login
 
 import android.util.Log
 import com.gitrepos.android.data.network.model.login.LoggedInUser
+import com.gitrepos.android.internal.NoConnectivityException
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -38,13 +40,14 @@ class LoginDataSource {
                         }
                     }
                 }
-            } catch (e: FirebaseAuthException) {
+            } catch (e: FirebaseException) {
                 Log.w("TAG", "signInWithEmail:failure", e)
-                result = LoginResult.Error(
-                    IOException("Error logging in", e)
-                )
+                result = if (e is FirebaseNetworkException) {
+                    LoginResult.Error(NoConnectivityException())
+                } else {
+                    LoginResult.Error(IOException("Error logging in", e))
+                }
             }
-
             return@withContext result
         }
 

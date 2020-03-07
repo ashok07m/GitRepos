@@ -39,4 +39,8 @@ class DatabaseRepositoryImpl(private val reposDao: ReposDao) : DatabaseRepositor
 
 
     }
+
+    override suspend fun deleteAllData() {
+        reposDao.deleteAll()
+    }
 }

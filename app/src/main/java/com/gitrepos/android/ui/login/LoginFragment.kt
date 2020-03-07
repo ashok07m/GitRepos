@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import com.gitrepos.android.R
@@ -15,18 +14,19 @@ import com.gitrepos.android.data.persistence.PreferenceManger
 import com.gitrepos.android.internal.afterTextChanged
 import com.gitrepos.android.internal.hideKeyboard
 import com.gitrepos.android.internal.showToast
-import com.gitrepos.android.ui.SharedViewModel
+import com.gitrepos.android.ui.CommonViewModel
 import com.gitrepos.android.ui.login.model.LoggedInUserView
 import com.gitrepos.android.ui.login.model.LoginFormState
 import com.gitrepos.android.ui.login.model.LoginResult
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LoginFragment : Fragment() {
 
     private val loginViewModel: LoginViewModel by viewModel()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val commonViewModel: CommonViewModel by sharedViewModel()
     private val preferenceManager: PreferenceManger by inject()
 
     override fun onCreateView(
@@ -34,13 +34,18 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        val isEnabledFPLogin =
+            preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
+        if (isEnabledFPLogin) {
+            group?.visibility = View.INVISIBLE
+        }
 
         val status = preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
         swFpEnable.isChecked = status
@@ -80,11 +85,14 @@ class LoginFragment : Fragment() {
         loginViewModel.getCurrentLoggedInUser()?.observe(viewLifecycleOwner, loggedInUserObserver)
         loginViewModel.loginFormState.observe(viewLifecycleOwner, loginFormStateObserver)
         loginViewModel.loginResult.observe(viewLifecycleOwner, loginResultObserver)
-        sharedViewModel.biAuthMsgLiveData.observe(viewLifecycleOwner, bioAuthMessageObserver)
+        commonViewModel.bioAuthMsgLiveData.observe(viewLifecycleOwner, bioAuthMessageObserver)
 
     }
 
-    fun updateUiWithUser(model: LoggedInUserView) {
+    /**
+     * Updates logged in user info and navigates to home screen
+     */
+    fun navigateToHomeScreen(model: LoggedInUserView) {
         view?.let {
             val isEnabledFPLogin = swFpEnable.isChecked
             preferenceManager.putBooleanValue(
@@ -93,10 +101,14 @@ class LoginFragment : Fragment() {
             )
             updateLoggedInUser(model)
             activity?.hideKeyboard(it)
-            it.findNavController().navigate(R.id.navigation_home)
+            val directions = LoginFragmentDirections.actionLoginFragmentToNavigationHome()
+            it.findNavController().navigate(directions)
         }
     }
 
+    /**
+     * Shows login fails error
+     */
     private fun showLoginFailed(@StringRes errorString: Int) {
         showToast(errorString)
     }
@@ -110,6 +122,9 @@ class LoginFragment : Fragment() {
         showToast("$welcome $displayName")
     }
 
+    /**
+     * Observes login form validations
+     */
     private val loginFormStateObserver: Observer<LoginFormState> = Observer {
         val loginState = it ?: return@Observer
 
@@ -124,6 +139,9 @@ class LoginFragment : Fragment() {
         }
     }
 
+    /**
+     * Observes login action result
+     */
     private val loginResultObserver: Observer<LoginResult> = Observer {
         val loginResult = it ?: return@Observer
 
@@ -132,23 +150,29 @@ class LoginFragment : Fragment() {
             showLoginFailed(loginResult.error)
         }
         if (loginResult.success != null) {
-            sharedViewModel.setLoggedInUser(loginResult.success)
-            updateUiWithUser(loginResult.success)
+            commonViewModel.setLoggedInUser(loginResult.success)
+            navigateToHomeScreen(loginResult.success)
         }
 
     }
 
+    /**
+     * Observes if user is already loggedIn and navigates if Bio Auth is not enabled
+     */
     private val loggedInUserObserver: Observer<LoggedInUserView> = Observer {
         it?.let {
             val isEnabledFPLogin =
                 preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-            sharedViewModel.setLoggedInUser(it)
+            commonViewModel.setLoggedInUser(it)
             if (!isEnabledFPLogin) {
-                updateUiWithUser(it)
+                navigateToHomeScreen(it)
             }
         }
     }
 
+    /**
+     * Observes bio authentication messages
+     */
     private val bioAuthMessageObserver: Observer<String> = Observer {
         txtMessage.text = it
     }

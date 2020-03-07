@@ -1,8 +1,8 @@
 package com.gitrepos.android.ui
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
@@ -13,6 +13,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.gitrepos.android.R
+import com.gitrepos.android.core.dialog.BaseDialogFragment
+import com.gitrepos.android.core.dialog.NativeAlertDialogFragment
 import com.gitrepos.android.data.auth.AuthDialogBuilder
 import com.gitrepos.android.data.auth.BioAuthCallBacks
 import com.gitrepos.android.data.auth.BioAuthManager
@@ -21,14 +23,14 @@ import com.gitrepos.android.ui.details.DetailsFragment
 import com.gitrepos.android.ui.login.LoginFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener,
     BioAuthCallBacks {
 
     private val preferenceManager: PreferenceManger by inject()
-    private val sharedViewModel: SharedViewModel by viewModels()
+    private val commonViewModel: CommonViewModel by viewModel()
     private lateinit var navController: NavController
 
     // Auth dialog information
@@ -70,16 +72,20 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         navController.addOnDestinationChangedListener(this)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
         // set auth manager in shared viewmodel
-        sharedViewModel.setBioAuthManager(bioAuthManager)
+        commonViewModel.setBioAuthManager(bioAuthManager)
     }
 
     override fun onResume() {
         super.onResume()
         // check bio auth status
-        bioAuthManager.canAuthenticate()
-
-        doBioAUth()
+        if (bioAuthManager.canAuthenticate()) {
+            doBioAUth()
+        }
     }
 
     override fun onDestinationChanged(
@@ -100,16 +106,16 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-        sharedViewModel.setBioAuthMessage(errString.toString())
+        commonViewModel.setBioAuthMessage(errString.toString())
     }
 
     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-        sharedViewModel.setBioAuthMessage("")
-        sharedViewModel.setBioAuthenticated(true)
+        commonViewModel.setBioAuthMessage("")
+        commonViewModel.setBioAuthenticated(true)
         val currentFragment = getCurrentFragment()
         if (currentFragment is LoginFragment) {
-            sharedViewModel.getLoggedInUser()?.let {
-                currentFragment.updateUiWithUser(it)
+            commonViewModel.getLoggedInUser()?.let {
+                currentFragment.navigateToHomeScreen(it)
             }
         }
     }
@@ -120,19 +126,28 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     }
 
     override fun onKeyInvalidated() {
-        sharedViewModel.setBioAuthMessage(getString(R.string.msg_new_fingerprint_enrolled))
+        commonViewModel.setBioAuthMessage(getString(R.string.msg_new_fingerprint_enrolled))
+        clearAndLogoutUser()
+        // show logged out dialog
+        showLoggedOutDialog()
     }
 
     override fun onFingerPrintsNotEnrolled() {
-        sharedViewModel.setBioAuthMessage(getString(R.string.msg_register_fingerprint))
+        commonViewModel.setBioAuthMessage(getString(R.string.msg_register_fingerprint))
+        val key = preferenceManager.getStringValue(getString(R.string.pref_key_enc_data))
+        if (!key.isNullOrEmpty()) {
+            clearAndLogoutUser()
+            // show logged out dialog
+            showLoggedOutDialog(message = R.string.message_no_fp_enrolled)
+        }
     }
 
     override fun onFingerPrintHardwareUnavailable() {
-        sharedViewModel.setBioAuthMessage(getString(R.string.msg_fingerprint_hardware_unavailable))
+        commonViewModel.setBioAuthMessage(getString(R.string.msg_fingerprint_hardware_unavailable))
     }
 
     override fun onNoFingerPrintSensorOnDevice() {
-        sharedViewModel.setBioAuthMessage(getString(R.string.msg_no_fp_sensor_on_device))
+        commonViewModel.setBioAuthMessage(getString(R.string.msg_no_fp_sensor_on_device))
     }
 
     /**
@@ -151,8 +166,53 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         val isEnabledFPLogin =
             preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
         if (isEnabledFPLogin && (getCurrentFragment() is LoginFragment || getCurrentFragment() is DetailsFragment)) {
-            group?.visibility = View.INVISIBLE
             bioAuthManager.authenticate()
         }
     }
+
+    /**
+     * Shows logged out dialog
+     */
+    private fun showLoggedOutDialog(message: Int = R.string.msg_new_fingerprint_enrolled) {
+        val title = getString(R.string.title_biometric_altered)
+        val message = getString(message)
+        val dialog =
+            commonViewModel.createDialogBuilder(
+                dialogCallbackListener,
+                title,
+                message
+            ).build()
+
+        supportFragmentManager?.let { dialog.show(it, NativeAlertDialogFragment.TAG) }
+    }
+
+    /**
+     * Callbacks from dialog
+     */
+    private val dialogCallbackListener = object : BaseDialogFragment.DialogEventListener {
+
+        override fun onPositiveButtonClicked(Object: Any) {
+
+        }
+
+        override fun onNegativeButtonClicked(Object: Any) {
+
+        }
+
+        override fun onCancelled(dialog: DialogInterface) {
+            dialog.dismiss()
+        }
+    }
+
+    /**
+     * Clears user data and log him out
+     */
+    private fun clearAndLogoutUser() {
+        // delete app data
+        commonViewModel.clearAppData()
+        // navigate to login screen
+        navController.popBackStack()
+        navController.navigate(R.id.navigation_login)
+    }
+
 }

@@ -27,4 +27,8 @@ class PreferenceManger(context: Context) {
 
     fun getStringValue(key: String) = with(sharedPreferences) { getString(key, null) }
 
+    fun clearAllPreferences() {
+        sharedPreferences.edit().clear().apply()
+    }
+
 }
