@@ -11,6 +11,7 @@ class SharedViewModel : ViewModel() {
     private var loggedInUserView: LoggedInUserView? = null
     private val bioAuthMsgMutableLiveData = MutableLiveData<String>().apply { "" }
     val biAuthMsgLiveData = bioAuthMsgMutableLiveData
+    private var isBiAuthenticated = false
 
     /**
      * Sets auth manager instance
@@ -41,12 +42,25 @@ class SharedViewModel : ViewModel() {
         return loggedInUserView
     }
 
-
     /**
      * Sets the messages received from bio authentication
      */
     fun setBioAuthMessage(message: String) {
         bioAuthMsgMutableLiveData.value = message
+    }
+
+    /**
+     * Set status of bio auth
+     */
+    fun setBioAuthenticated(status: Boolean) {
+        isBiAuthenticated = status
+    }
+
+    /**
+     * Gets status of bio auth
+     */
+    fun isBioAuthenticated(): Boolean {
+        return isBiAuthenticated
     }
 
     companion object {

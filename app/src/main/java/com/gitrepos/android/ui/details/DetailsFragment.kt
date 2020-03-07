@@ -32,8 +32,10 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        activity?.run {
-            (this as MainActivity).doBioAUth()
+        if (!sharedViewModel.isBioAuthenticated()) {
+            activity?.run {
+                (this as MainActivity).doBioAUth()
+            }
         }
 
         return inflater.inflate(R.layout.fragment_details, container, false)
@@ -77,7 +79,7 @@ class DetailsFragment : Fragment() {
      * Observes repository language
      */
     private val languageObserver = Observer<String> {
-        txtLangValue.text = it ?: "NA"
+        txtLangValue.text = it ?: "N.A"
     }
 
     /**

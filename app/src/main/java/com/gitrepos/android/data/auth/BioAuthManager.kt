@@ -10,11 +10,14 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.gitrepos.android.R
+import com.gitrepos.android.data.persistence.PreferenceManger
 import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
 import javax.crypto.*
-import javax.crypto.spec.GCMParameterSpec
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
 
 /**
  * Class to handle biometric authentication actions
@@ -24,16 +27,34 @@ import javax.crypto.spec.GCMParameterSpec
 class BioAuthManager(
     private val activity: FragmentActivity,
     private val bioAuthCallBacks: BioAuthCallBacks,
-    private val authBuilder: AuthDialogBuilder
+    authBuilder: AuthDialogBuilder,
+    private val preferenceManager: PreferenceManger
 ) {
 
     private lateinit var keyStore: KeyStore
     private lateinit var keyGenerator: KeyGenerator
     private var biometricPrompt: BiometricPrompt
     private var promptInfo: BiometricPrompt.PromptInfo
+    private var cryptoObject: BiometricPrompt.CryptoObject? = null
+    private lateinit var decodedKey: ByteArray
+    private val encryptionKey: ByteArray by lazy {
+        java.util.UUID.randomUUID().toString()
+            .replace("-", "")
+            .substring(0, KEY_LENGTH)
+            .toByteArray()
+    }
+
     private val keyName: String by lazy {
-        createKey(DEFAULT_KEY_NAME)
-        DEFAULT_KEY_NAME
+        createKey(KEY_ALIAS)
+        KEY_ALIAS
+    }
+
+    private val prefKeyIV by lazy {
+        activity.getString(R.string.pref_key_iv)
+    }
+
+    private val prefKeyEncData by lazy {
+        activity.getString(R.string.pref_key_enc_data)
     }
 
 
@@ -68,14 +89,23 @@ class BioAuthManager(
     }
 
     /**
+     * Gets key from keystore
+     */
+    private fun geSecretKey(): SecretKey {
+        keyStore.apply {
+            load(null)
+        }
+        return keyStore.getKey(keyName, null) as SecretKey
+    }
+
+    /**
      * Sets up ciphers for encryption/decryption
      */
     private fun getCipher(): Cipher {
         var cipher: Cipher
         try {
             val cipherString =
-                "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_GCM}/${KeyProperties.ENCRYPTION_PADDING_NONE}"
-
+                "${KeyProperties.KEY_ALGORITHM_AES}/${KeyProperties.BLOCK_MODE_CBC}/${KeyProperties.ENCRYPTION_PADDING_PKCS7}"
             cipher = Cipher.getInstance(cipherString)
         } catch (e: Exception) {
             when (e) {
@@ -96,27 +126,21 @@ class BioAuthManager(
      * @return `true` if initialization succeeded, `false` if the lock screen has been disabled or
      * reset after key generation, or if a fingerprint was enrolled after key generation.
      */
+
     private fun initCipher(
         cipher: Cipher,
-        keyName: String,
+        iv: ByteArray? = null,
         mode: Int = Cipher.ENCRYPT_MODE
     ): Boolean {
         try {
-            keyStore.load(null)
             if (mode == Cipher.DECRYPT_MODE) {
-                cipher.init(
-                    mode,
-                    keyStore.getKey(keyName, null) as SecretKey,
-                    GCMParameterSpec(IV_SIZE, FIXED_IV_12_BYTES)
-                )
+                cipher.init(mode, geSecretKey(), IvParameterSpec(iv))
             } else {
-                cipher.init(
-                    mode, keyStore.getKey(keyName, null) as SecretKey,
-                    GCMParameterSpec(IV_SIZE, FIXED_IV_12_BYTES)
-                )
+                cipher.init(mode, geSecretKey())
             }
             return true
         } catch (e: Exception) {
+            e.printStackTrace()
             when (e) {
                 is KeyPermanentlyInvalidatedException -> return false
                 is KeyStoreException,
@@ -140,25 +164,21 @@ class BioAuthManager(
      * be invalidated if a new fingerprint is enrolled.
      */
     private fun createKey(keyName: String, invalidatedByBiometricEnrollment: Boolean = true) {
-        // The enrolling flow for fingerprint. This is where you ask the user to set up fingerprint
-        // for your flow. Use of keys is necessary if you need to know if the set of enrolled
-        // fingerprints has changed.
         try {
             keyStore.load(null)
 
             if (!keyStore.containsAlias(keyName)) {
                 val keyProperties = KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
                 val builder = KeyGenParameterSpec.Builder(keyName, keyProperties)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-                    .setUserAuthenticationRequired(false)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                    .setUserAuthenticationRequired(true)
                     .setRandomizedEncryptionRequired(false)
                     .setInvalidatedByBiometricEnrollment(invalidatedByBiometricEnrollment)
 
                 keyGenerator.init(builder.build())
                 val key = keyGenerator.generateKey()
                 Log.d(TAG, "Key generated : $key")
-
 
             } else {
                 Log.d(TAG, "Key already generated..")
@@ -200,8 +220,28 @@ class BioAuthManager(
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                Log.d(TAG, "Authentication was successful")
+                Log.d(TAG, "Authentication successful")
                 bioAuthCallBacks.onAuthenticationSucceeded(result)
+                cryptoObject = result.cryptoObject
+                cryptoObject?.cipher?.let {
+                    val key =
+                        preferenceManager.getStringValue(activity.getString(R.string.pref_key_enc_data))
+                    if (key.isNullOrEmpty()) {
+                        Log.e(TAG, "Encrypt auth key")
+                        val iv = it.iv
+                        decodedKey = encryptionKey
+                        // perform bio auth encryption over the plain encryption key
+                        val authEncrypted = it.doFinal(encryptionKey)
+                        saveEncryptedData(authEncrypted, iv)
+                    } else {
+                        Log.e(TAG, "Decrypt auth key")
+                        val decodeBase64Key = Base64.decode(key, Base64.DEFAULT)
+                        // get plain key after bio authentication
+                        decodedKey = it.doFinal(decodeBase64Key)
+                    }
+
+                    Log.e(TAG, "decoded key :${String(decodedKey)}")
+                }
             }
         }
 
@@ -234,16 +274,44 @@ class BioAuthManager(
         when (canAuthenticate) {
 
             BiometricManager.BIOMETRIC_SUCCESS -> {
+
                 val encCipher = getCipher()
-                if (initCipher(cipher = encCipher, keyName = keyName)) {
-                    biometricPrompt.authenticate(
-                        promptInfo,
-                        BiometricPrompt.CryptoObject(encCipher)
-                    )
+                val iv = preferenceManager.getStringValue(prefKeyIV)
+
+                if (!iv.isNullOrEmpty()) {
+                    Log.d(TAG, "authenticate() : Decryption mode.")
+
+                    val decodeBase64IV = Base64.decode(iv, Base64.DEFAULT)
+
+                    if (initCipher(
+                            cipher = encCipher,
+                            iv = decodeBase64IV,
+                            mode = Cipher.DECRYPT_MODE
+                        )
+                    ) {
+                        biometricPrompt.authenticate(
+                            promptInfo,
+                            BiometricPrompt.CryptoObject(encCipher)
+                        )
+                    } else {
+                        Log.d(TAG, "authenticate() : unable to initialize the cipher.")
+                        bioAuthCallBacks.onKeyInvalidated()
+                    }
+
                 } else {
-                    Log.d(TAG, "authenticate() : unable to initialize the cipher.")
-                    bioAuthCallBacks.onKeyInvalidated()
+                    Log.d(TAG, "authenticate() : Encryption mode.")
+
+                    if (initCipher(cipher = encCipher)) {
+                        biometricPrompt.authenticate(
+                            promptInfo,
+                            BiometricPrompt.CryptoObject(encCipher)
+                        )
+                    } else {
+                        Log.d(TAG, "authenticate() : unable to initialize the cipher.")
+                        bioAuthCallBacks.onKeyInvalidated()
+                    }
                 }
+
             }
 
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
@@ -260,14 +328,17 @@ class BioAuthManager(
         }
     }
 
+    /**
+     * Check whether key is valid for authentication or not
+     */
     fun canAuthenticate(): Boolean {
         val canAuthenticate = BiometricManager.from(activity).canAuthenticate()
         Log.d(TAG, "authenticate() : canAuthenticate: $canAuthenticate")
 
         if (canAuthenticate == BiometricManager.BIOMETRIC_SUCCESS) {
 
-            val cipher = getCipher()
-            if (initCipher(cipher = cipher, keyName = keyName)) {
+            val encCipher = getCipher()
+            if (initCipher(cipher = encCipher)) {
                 return true
             } else {
                 Log.d(TAG, "authenticate() : unable to initialize the cipher.")
@@ -277,15 +348,31 @@ class BioAuthManager(
         return false
     }
 
+
+    /**
+     * Saves base64 encryption format of secret key & initializationVector in sharedPrefs
+     */
+    private fun saveEncryptedData(dataEncrypted: ByteArray, initializationVector: ByteArray) {
+        preferenceManager.run {
+            putStringValue(prefKeyEncData, Base64.encodeToString(dataEncrypted, Base64.DEFAULT))
+            putStringValue(prefKeyIV, Base64.encodeToString(initializationVector, Base64.DEFAULT))
+        }
+    }
+
     /**
      * Tries to encrypt given data with the generated key from [createKey]. This only works if the
      * user just authenticated via fingerprint.
      */
     fun encryptData(data: String): String? {
         try {
-            val cipher = getCipher()
-            if (initCipher(cipher = cipher, keyName = keyName)) {
-                val encryptedBytes = cipher.doFinal(data.toByteArray())
+
+            val iv = preferenceManager.getStringValue(prefKeyIV)
+            if (!::decodedKey.isInitialized or iv.isNullOrEmpty()) return null
+
+            val decodeBase64IV = Base64.decode(iv, Base64.DEFAULT)
+
+            decodeBase64IV?.let {
+                val encryptedBytes = encrypt(data.toByteArray(), decodedKey, decodeBase64IV)
                 val encBase64 = Base64.encodeToString(encryptedBytes, Base64.DEFAULT)
                 Log.d(TAG, "encryptData() : encBase64 :$encBase64")
                 return encBase64
@@ -313,16 +400,19 @@ class BioAuthManager(
      */
     fun decryptData(encryptedInput: String): String? {
         try {
-            val cipher = getCipher()
-            if (initCipher(cipher = cipher, keyName = keyName, mode = Cipher.DECRYPT_MODE)) {
+            val iv = preferenceManager.getStringValue(prefKeyIV)
+            if (!::decodedKey.isInitialized or iv.isNullOrEmpty()) return null
+
+            val decodeBase64IV = Base64.decode(iv, Base64.DEFAULT)
+
+            decodeBase64IV?.let {
                 Log.d(TAG, "decryptData() : encryptedInput :$encryptedInput")
                 val encryptedBytes = Base64.decode(encryptedInput, Base64.DEFAULT)
-                val decryptedBytes = cipher.doFinal(encryptedBytes)
+                val decryptedBytes = decrypt(encryptedBytes, decodedKey, decodeBase64IV)
                 val decData = String(decryptedBytes)
                 Log.d(TAG, "decryptData() : decData :$decData")
                 return decData
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
             when (e) {
@@ -339,14 +429,38 @@ class BioAuthManager(
         return null
     }
 
+    /**
+     * Tries to encrypt the input data
+     */
+    private fun encrypt(data: ByteArray, key: ByteArray, ivs: ByteArray): ByteArray? {
+        val cipher: Cipher = getCipher()
+        val secretKeySpec = SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES)
+        val finalIvs = ByteArray(IV_SIZE)
+        ivs.copyInto(finalIvs)
+        val iv = IvParameterSpec(finalIvs)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, iv)
+        return cipher.doFinal(data)
+    }
+
+    /**
+     * Tries to decrypt the input data
+     */
+    private fun decrypt(data: ByteArray, key: ByteArray, ivs: ByteArray): ByteArray {
+        val cipher: Cipher = getCipher()
+        val secretKeySpec = SecretKeySpec(key, KeyProperties.KEY_ALGORITHM_AES)
+        val finalIvs = ByteArray(IV_SIZE)
+        ivs.copyInto(finalIvs)
+        val iv = IvParameterSpec(finalIvs)
+        cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, iv)
+        return cipher.doFinal(data)
+    }
+
 
     companion object {
         private const val ANDROID_KEY_STORE = "AndroidKeyStore"
-        private const val DEFAULT_KEY_NAME = "secret_key"
+        private const val KEY_ALIAS = "secret_key"
         private const val TAG = "BioAuthManager"
-
-        private val FIXED_IV_12_BYTES = "A1B2C3D4E5F6".toByteArray()
-        private const val IV_SIZE = 128
-
+        private const val IV_SIZE = 16
+        private const val KEY_LENGTH = 16
     }
 }

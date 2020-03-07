@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         BioAuthManager(
             this,
             this,
-            authDialogBuilder
+            authDialogBuilder,
+            preferenceManager
         )
     }
 
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
         sharedViewModel.setBioAuthMessage("")
+        sharedViewModel.setBioAuthenticated(true)
         val currentFragment = getCurrentFragment()
         if (currentFragment is LoginFragment) {
             sharedViewModel.getLoggedInUser()?.let {
