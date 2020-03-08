@@ -1,13 +1,14 @@
 package com.gitrepos.android.data.database.entity
 
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-const val table_git_repos = "gitReposCache_table"
+const val table_git_cache = "cache_table"
 
-@Entity(tableName = table_git_repos)
+@Entity(tableName = table_git_cache)
 data class GitItem(
     @field:SerializedName("created_at")
     val createdAt: String,
@@ -23,8 +24,8 @@ data class GitItem(
     val homepage: String?,
     @field:SerializedName("html_url")
     val htmlUrl: String,
-    @PrimaryKey @field:SerializedName("id")
-    val id: Int,
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id")
+    val _id: Int = 0,
     @field:SerializedName("language")
     val language: String?,
     @field:SerializedName("name")

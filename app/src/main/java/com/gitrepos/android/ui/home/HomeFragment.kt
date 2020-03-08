@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.gitrepos.android.R
+import com.gitrepos.android.internal.hideKeyboard
 import com.gitrepos.android.internal.showToast
 import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
@@ -47,6 +48,7 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initSearch()
+        setupScrollListener()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +102,7 @@ class HomeFragment : Fragment() {
         etSearchRepo.apply {
             setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    homeViewModel.searchRepositories(text.toString())
+                    updateRepoListFromInput()
                     true
                 } else {
                     false
@@ -108,7 +110,7 @@ class HomeFragment : Fragment() {
             }
             setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    homeViewModel.searchRepositories(text.toString())
+                    updateRepoListFromInput()
                     true
                 } else {
                     false
@@ -116,5 +118,44 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    /**
+     * Fires query to fetch repos based on input string
+     */
+    private fun updateRepoListFromInput() {
+        etSearchRepo.text?.trim().let {
+            it?.let {
+                if (it.isNotEmpty()) {
+                    rvHome.scrollToPosition(0)
+                    homeViewModel.searchRepositories(it.toString())
+                    groupAdapter.clear()
+                    activity?.hideKeyboard(etSearchRepo)
+                }
+            }
+        }
+    }
+
+    /**
+     * Scroll listener for list
+     */
+    private fun setupScrollListener() {
+        val layoutManager =
+            rvHome.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
+        rvHome.addOnScrollListener(object :
+            androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+            override fun onScrolled(
+                recyclerView: androidx.recyclerview.widget.RecyclerView,
+                dx: Int,
+                dy: Int
+            ) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalItemCount = layoutManager.itemCount
+                val visibleItemCount = layoutManager.childCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+                homeViewModel.listScrolled(visibleItemCount, lastVisibleItem, totalItemCount)
+            }
+        })
+    }
+
 
 }

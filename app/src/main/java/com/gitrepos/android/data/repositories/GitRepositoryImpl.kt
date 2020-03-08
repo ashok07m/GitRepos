@@ -45,22 +45,32 @@ class GitRepositoryImpl(private val gitReposDataSource: GitReposDataSource) : Gi
     override suspend fun searchPublicGitRepos(queryString: String) {
         coroutineScope {
             launch(Dispatchers.Default) {
-                when (val response = gitReposDataSource.searchGitRepos(queryString)) {
-                    is GitResult.SuccessRepos -> {
-                        val repos = response.repositories
-                        val itemList = transformResult(repos)
-                        _successMutableLiveData.postValue(itemList)
+                val response = gitReposDataSource.searchGitRepos(queryString)
+                updateResponse(response)
+            }
+        }
+    }
 
-                        val error = response.error
-                        Log.d(TAG, "Error : ${error.errorCode}")
-                        if (GitResult.Error.ErrorCodes.NONE != error.errorCode) {
-                            _errorMutableLiveData.postValue(error.errorCode)
-                        }
-                    }
-                    else -> {
-                        Log.d(TAG, "response :$response")
-                    }
+    override suspend fun loadMoreGitRepos(queryString: String) {
+        val response = gitReposDataSource.loadMoreGitRepos(queryString)
+        updateResponse(response)
+    }
+
+    private fun updateResponse(response: GitResult) {
+        when (response) {
+            is GitResult.SuccessRepos -> {
+                val repos = response.repositories
+                val itemList = transformResult(repos)
+                _successMutableLiveData.postValue(itemList)
+
+                val error = response.error
+                Log.d(TAG, "Error : ${error.errorCode}")
+                if (GitResult.Error.ErrorCodes.NONE != error.errorCode) {
+                    _errorMutableLiveData.postValue(error.errorCode)
                 }
+            }
+            else -> {
+                Log.d(TAG, "response :$response")
             }
         }
     }

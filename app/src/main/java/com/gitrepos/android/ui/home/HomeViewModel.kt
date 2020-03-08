@@ -1,5 +1,6 @@
 package com.gitrepos.android.ui.home
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,8 @@ class HomeViewModel(
     private val _errorMutableLiveData = MutableLiveData<Int>()
     val errorLiveData: LiveData<Int> = _errorMutableLiveData
 
+    private var lastSearchedQuery: String = DEFAULT_QUERY
+
     init {
         gitRepository.successLiveData.observeForever {
             successMutableLiveData.value = it
@@ -34,17 +37,31 @@ class HomeViewModel(
             }
         }
 
-
+        // load default repos
+        searchRepositories(DEFAULT_QUERY)
     }
 
     /**
      * Fetch list of repositories from network
      */
     fun searchRepositories(queryString: String) = viewModelScope.launch {
+        lastSearchedQuery = queryString
         gitRepository.searchPublicGitRepos(queryString)
+    }
+
+    fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
+        val count = visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD
+        if (count >= totalItemCount) {
+            Log.e(TAG, "listScrolled : count :$count , total :$totalItemCount")
+            viewModelScope.launch {
+                gitRepository.loadMoreGitRepos(lastSearchedQuery)
+            }
+        }
     }
 
     companion object {
         const val TAG = "HomeViewModel"
+        const val VISIBLE_THRESHOLD = 7
+        const val DEFAULT_QUERY = "Android"
     }
 }

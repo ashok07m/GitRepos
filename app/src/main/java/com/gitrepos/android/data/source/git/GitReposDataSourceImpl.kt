@@ -18,50 +18,56 @@ class GitReposDataSourceImpl(
     private val gitCacheDbRepository: GitCacheDbRepository
 ) : GitReposDataSource {
 
-    private var lastRequestedPage = 1
     private var isRequestInProgress = false
+    private var lastRequestedPage = 1
 
-    override suspend fun searchGitRepos(query: String): GitResult = withContext(Dispatchers.IO) {
-        //if (isRequestInProgress) return
-        var searchErrorResult: GitResult.Error = GitResult.Error(ErrorCodes.NONE, "No error")
-        try {
-            lastRequestedPage = 1
-            isRequestInProgress = true
-            val response =
-                gitApiService.searchRepos(query, lastRequestedPage, NETWORK_PAGE_SIZE)
+    override suspend fun searchGitRepos(query: String, pageIndex: Int): GitResult =
 
-            if (response.isSuccessful) {
-                val body = response.body()
+        withContext(Dispatchers.IO) {
+            var searchErrorResult: GitResult.Error = GitResult.Error(ErrorCodes.NONE, "No error")
+            try {
+                isRequestInProgress = true
+                val response =
+                    gitApiService.searchRepos(query, lastRequestedPage, NETWORK_PAGE_SIZE)
 
-                if (body?.gitItems != null) {
-                    val items = body.gitItems
-                    if (items.isNotEmpty()) {
-                        gitCacheDbRepository.saveGitRepos(items)
-                        lastRequestedPage++
+                if (response.isSuccessful) {
+                    val body = response.body()
+
+                    if (body?.gitItems != null) {
+                        val items = body.gitItems
+                        if (items.isNotEmpty()) {
+                            gitCacheDbRepository.saveGitRepos(items)
+                            lastRequestedPage++
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                Log.e("GitReposDataSourceImpl", "Exception :$e")
+                searchErrorResult =
+                    if (e is NoConnectivityException || e is UnknownHostException || e is ConnectException) {
+                        GitResult.Error(ErrorCodes.NoConnectivityError, e.message)
+                    } else {
+                        GitResult.Error(ErrorCodes.ServerError, e.message)
+                    }
             }
-        } catch (e: Exception) {
-            Log.e("GitReposDataSourceImpl", "Exception :$e")
-            searchErrorResult =
-                if (e is NoConnectivityException || e is UnknownHostException || e is ConnectException) {
-                    GitResult.Error(ErrorCodes.NoConnectivityError, e.message)
-                } else {
-                    GitResult.Error(ErrorCodes.ServerError, e.message)
-                }
+
+            // query database for the cached data
+            val items = gitCacheDbRepository.fetchCachedRepos(query)
+            val result = GitResult.SuccessRepos(items, searchErrorResult)
+            isRequestInProgress = false
+
+            return@withContext result
         }
 
-        // query database for the cached data
-        val items = gitCacheDbRepository.fetchCachedRepos(query)
-        val result = GitResult.SuccessRepos(items, searchErrorResult)
-        isRequestInProgress = false
-
-        return@withContext result
+    override suspend fun loadMoreGitRepos(queryString: String): GitResult {
+        var searchErrorResult: GitResult.Error =
+            GitResult.Error(ErrorCodes.NONE, "Already search request sent")
+        if (isRequestInProgress) return searchErrorResult
+        return searchGitRepos(queryString, lastRequestedPage)
     }
 
-
     companion object {
-        private const val NETWORK_PAGE_SIZE = 50
+        private const val NETWORK_PAGE_SIZE = 40
     }
 }
 

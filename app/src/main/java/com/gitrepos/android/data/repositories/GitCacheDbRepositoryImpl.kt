@@ -14,6 +14,7 @@ class GitCacheDbRepositoryImpl(private val gitItemDao: GitItemsDao) : GitCacheDb
     override suspend fun saveGitRepos(gitItemsList: List<GitItem>) {
         coroutineScope {
             launch(Dispatchers.IO) {
+                gitItemDao.keepOnlyLatest50Rows()
                 gitItemDao.insert(gitItemsList)
                 Log.d("GitCacheDbRepositoryImpl", "saveGitRepos")
             }
@@ -26,25 +27,6 @@ class GitCacheDbRepositoryImpl(private val gitItemDao: GitItemsDao) : GitCacheDb
             // appending '%' so we can allow other characters to be before and after the query string
             val query = "%${queryText.replace(' ', '%')}%"
             val reposList = gitItemDao.fetchReposByName(query)
-/*
-
-        reposList.map {
-            it.map { entity ->
-                val repo =
-                    Repo(
-                        entity.owner.avatarUrl, entity.owner.login, entity.name,
-                        "${entity.fullName}", entity.description, entity.language
-                    )
-                itemList.add(RepoItem(repo))
-            }
-            itemList
-        }.flowOn(Dispatchers.Default)
-            .collect {
-                Log.d("TAG", "fetchSavedRepos :$it")
-                emit(it)
-            }
-
-*/
             return@withContext reposList
         }
 
