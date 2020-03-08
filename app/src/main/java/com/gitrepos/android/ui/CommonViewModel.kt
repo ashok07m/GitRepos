@@ -26,6 +26,9 @@ class CommonViewModel(
     private val bioAuthMsgMutableLiveData = MutableLiveData<String>().apply { "" }
     val bioAuthMsgLiveData = bioAuthMsgMutableLiveData
     private var isBiAuthenticated = false
+    val emptyData by lazy {
+        appContext.getString(R.string.label_not_available)
+    }
 
     /**
      * Sets auth manager instance

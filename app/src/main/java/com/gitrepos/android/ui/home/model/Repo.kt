@@ -9,12 +9,11 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Repo(
-    var avatarUrl: String,
-    var owner: String,
-    var title: String,
+    var name: String,
     var fullName: String,
-    var description: String? = "N.A",
-    var language: String? = "N.A",
-    var starCount: Int? = 0,
-    var lastUpdated: String? = null
+    var description: String?,
+    var homePage: String?,
+    var language: String?,
+    var starsCount: String,
+    var forksCount: String
 ) : Parcelable

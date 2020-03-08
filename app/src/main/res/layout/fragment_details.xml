@@ -6,58 +6,47 @@
     android:layout_height="match_parent"
     tools:context=".ui.details.DetailsFragment">
 
-    <ImageView
-        android:id="@+id/imgOwnerAvatar"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_photo_24dp" />
-
     <TextView
-        android:id="@+id/txtOwner"
+        android:id="@+id/txtFullName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:gravity="center_horizontal"
-        android:text="@string/label_owner"
+        android:text="Full name"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/colorAccent"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgOwnerAvatar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/txtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:gravity="center_horizontal"
         android:text="@string/label_repo_title"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtOwner"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
+        app:layout_constraintTop_toBottomOf="@+id/txtFullName"
         app:layout_constraintVertical_bias="0.05" />
 
     <TextView
-        android:id="@+id/txtTitleValue"
+        android:id="@+id/txtNameValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:text="Albert"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/txtOwner"
-        app:layout_constraintStart_toStartOf="@+id/txtOwner"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
+        app:layout_constraintTop_toBottomOf="@+id/txtName"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -66,26 +55,25 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:gravity="center_horizontal"
         android:text="@string/label_desc"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitleValue"
+        app:layout_constraintTop_toBottomOf="@+id/txtNameValue"
         app:layout_constraintVertical_bias="0.05" />
 
     <TextView
         android:id="@+id/txtDescValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="abc"
         android:ellipsize="end"
         android:maxLines="5"
+        android:text="abc"
         android:textColor="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="@+id/txtOwner"
-        app:layout_constraintStart_toStartOf="@+id/txtOwner"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
         app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
 
@@ -93,12 +81,12 @@
         android:id="@+id/txtLanguage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:text="@string/label_language"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
         app:layout_constraintTop_toBottomOf="@+id/txtDescValue"
         app:layout_constraintVertical_bias="0.05" />
 
@@ -106,18 +94,98 @@
         android:id="@+id/txtLangValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:text="abc"
         android:textColor="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
+        app:layout_constraintTop_toBottomOf="@+id/txtLanguage" />
+
+    <TextView
+        android:id="@+id/txtStars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_stars"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/txtOwner"
-        app:layout_constraintStart_toStartOf="@+id/txtOwner"
-        app:layout_constraintTop_toBottomOf="@+id/txtLanguage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
+        app:layout_constraintTop_toBottomOf="@+id/txtLangValue"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <TextView
+        android:id="@+id/txtStarsValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:drawableStart="@drawable/ic_star_24dp"
+        android:gravity="center|start"
+        android:text="10"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtFullName"
+        app:layout_constraintTop_toBottomOf="@+id/txtStars" />
+
+
+    <TextView
+        android:id="@+id/txtForks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_forks"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtStars"
+        app:layout_constraintTop_toBottomOf="@+id/txtStarsValue"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <TextView
+        android:id="@+id/txtForksValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:drawableStart="@drawable/ic_forks_24dp"
+        android:gravity="center|start"
+        android:text="10"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtForks"
+        app:layout_constraintTop_toBottomOf="@+id/txtForks"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtHomePage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_home_page"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtForks"
+        app:layout_constraintTop_toBottomOf="@+id/txtForksValue"
+        app:layout_constraintVertical_bias="0.05" />
+
+    <TextView
+        android:id="@+id/txtHomePageValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:drawableStart="@drawable/ic_link_24dp"
+        android:gravity="center|start"
+        android:text="10"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/txtFullName"
+        app:layout_constraintStart_toStartOf="@+id/txtHomePage"
+        app:layout_constraintTop_toBottomOf="@+id/txtHomePage"
         app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.button.MaterialButton
-        style="@style/buttonBoldFilled"
         android:id="@+id/btnSave"
+        style="@style/buttonBoldFilled"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -127,7 +195,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtLangValue"
+        app:layout_constraintTop_toBottomOf="@+id/txtHomePageValue"
         app:layout_constraintVertical_bias="1.0" />
 
 

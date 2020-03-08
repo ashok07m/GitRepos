@@ -42,10 +42,16 @@ val appModule = module {
             androidContext().getString(R.string.base_url_git_repos)
         )
     }
+
+    single { AppDatabase.getAppDatabaseInstance(get()) }
+    factory { get<AppDatabase>().reposDao() }
+    single<DatabaseRepository> { DatabaseRepositoryImpl(get()) }
+
+    factory { get<AppDatabase>().gitItemsDao() }
+    single<GitCacheDbRepository> { GitCacheDbRepositoryImpl(get()) }
+
     single<GitReposDataSource> {
-        GitReposDataSourceImpl(
-            get()
-        )
+        GitReposDataSourceImpl(get(), get())
     }
 
     single<GitRepository> { GitRepositoryImpl(get()) }
@@ -54,10 +60,6 @@ val appModule = module {
     single { LoginDataSource() }
     single<LoginRepository> { LoginRepositoryImpl(get()) }
     viewModel { LoginViewModel(get(), get()) }
-
-    single { AppDatabase.getAppDatabaseInstance(get()) }
-    factory { get<AppDatabase>().reposDao() }
-    single<DatabaseRepository> { DatabaseRepositoryImpl(get()) }
 
     viewModel { DetailsViewModel(get(), get()) }
 

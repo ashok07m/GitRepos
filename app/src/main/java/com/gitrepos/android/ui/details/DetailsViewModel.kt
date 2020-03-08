@@ -17,17 +17,6 @@ class DetailsViewModel(
     private val dbRepository: DatabaseRepository
 ) : ViewModel() {
 
-    private var langMutableLiveData = MutableLiveData<String>()
-    val langLiveData: LiveData<String> = langMutableLiveData
-
-    /**
-     * Fetches language from github for the specified repo
-     */
-    fun fetchLanguage(owner: String, repo: String) = viewModelScope.launch {
-        val language = gitRepository.fetchGitLanguage(owner, repo)
-        langMutableLiveData.value = language
-    }
-
     /**
      * Save repos details in database
      */
@@ -51,11 +40,13 @@ class DetailsViewModel(
         bioAuthManager: BioAuthManager
     ): ReposEntity = withContext(Dispatchers.Default) {
         reposEntity.apply {
-            avatarUrl = bioAuthManager.encryptData(avatarUrl) ?: avatarUrl
-            owner = bioAuthManager.encryptData(owner) ?: owner
-            title = bioAuthManager.encryptData(title) ?: title
+            name = bioAuthManager.encryptData(name) ?: name
+            fullName = bioAuthManager.encryptData(fullName) ?: fullName
+            starsCount = bioAuthManager.encryptData(starsCount) ?: starsCount
+            forksCount = bioAuthManager.encryptData(forksCount) ?: forksCount
             description = description?.let { bioAuthManager.encryptData(it) } ?: description
             language = language?.let { bioAuthManager.encryptData(it) } ?: language
+            homepage = homepage?.let { bioAuthManager.encryptData(it) } ?: homepage
         }
     }
 

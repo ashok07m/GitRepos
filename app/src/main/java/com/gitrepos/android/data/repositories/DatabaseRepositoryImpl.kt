@@ -22,11 +22,16 @@ class DatabaseRepositoryImpl(private val reposDao: ReposDao) : DatabaseRepositor
         val reposList = reposDao.fetchSavedRepos().flowOn(Dispatchers.IO)
 
         reposList.map {
-            it.map { entity ->
+            it.map { item ->
                 val repo =
                     Repo(
-                        entity.avatarUrl, entity.owner, entity.title,
-                        "${entity.owner}/${entity.title}", entity.description, entity.language
+                        name = item.name,
+                        fullName = item.fullName,
+                        starsCount = item.starsCount,
+                        forksCount = item.forksCount,
+                        description = item.description,
+                        language = item.language,
+                        homePage = item.homepage
                     )
                 itemList.add(RepoItem(repo))
             }

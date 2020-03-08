@@ -22,46 +22,54 @@
             app:srcCompat="@drawable/ic_arrow_right_24dp" />
 
         <TextView
-            android:id="@+id/txtTitle"
+            android:id="@+id/txtFullName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Repo 1"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imgMore"
-            app:layout_constraintStart_toEndOf="@+id/imgOwnerAvatar"
-            app:layout_constraintTop_toTopOf="@+id/imgOwnerAvatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/txtDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="Description"
-            app:layout_constraintBottom_toBottomOf="@+id/imgOwnerAvatar"
-            app:layout_constraintEnd_toEndOf="@+id/txtTitle"
+            app:layout_constraintEnd_toEndOf="@+id/txtFullName"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/txtTitle"
-            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintStart_toStartOf="@+id/txtFullName"
+            app:layout_constraintTop_toBottomOf="@+id/txtFullName" />
 
-        <ImageView
-            android:id="@+id/imgOwnerAvatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="8dp"
+        <TextView
+            android:id="@+id/txtLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_lang"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_photo_24dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDesc"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/txtStars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:drawableStart="@drawable/ic_star_24dp"
+            android:text="stars"
+            app:layout_constraintBottom_toBottomOf="@+id/txtLanguage"
+            app:layout_constraintEnd_toEndOf="@+id/txtDesc"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/txtLanguage"
+            app:layout_constraintTop_toTopOf="@+id/txtLanguage" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

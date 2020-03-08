@@ -53,4 +53,10 @@
     <string name="title_biometric_altered">Fingerprints Altered</string>
     <string name="message_no_fp_enrolled">No biometric enrolled,your saved app data is wiped out.</string>
     <string name="message_logout_restricted">Logut temporarily disabled</string>
+    <string name="search_hint">Git repository</string>
+    <string name="default_search_repo">Android</string>
+    <string name="label_stars">Stars</string>
+    <string name="label_forks">Forks</string>
+    <string name="label_home_page">Home page</string>
+    <string name="label_not_available">N.A</string>
 </resources>

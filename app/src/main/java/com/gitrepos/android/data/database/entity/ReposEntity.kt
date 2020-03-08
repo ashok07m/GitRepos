@@ -11,12 +11,14 @@ import androidx.room.PrimaryKey
  */
 const val table_repos = "repos_table"
 
-@Entity(tableName = table_repos, indices = [Index(value = ["title"], unique = true)])
+@Entity(tableName = table_repos, indices = [Index(value = ["name"], unique = true)])
 data class ReposEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "_id") val id: Int = 0,
-    @NonNull @ColumnInfo(name = "title") var title: String,
+    @NonNull @ColumnInfo(name = "name") var name: String,
+    @ColumnInfo(name = "fullName") var fullName: String,
     @ColumnInfo(name = "description") var description: String? = null,
     @ColumnInfo(name = "language") var language: String? = null,
-    @NonNull @ColumnInfo(name = "owner") var owner: String,
-    @ColumnInfo(name = "avatarUrl") var avatarUrl: String
+    @NonNull @ColumnInfo(name = "stars_count") var starsCount: String,
+    @NonNull @ColumnInfo(name = "forks_count") var forksCount: String,
+    @ColumnInfo(name = "homepage") var homepage: String
 )

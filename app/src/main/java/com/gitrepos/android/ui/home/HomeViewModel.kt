@@ -10,7 +10,10 @@ import com.gitrepos.android.data.source.git.GitResult
 import com.gitrepos.android.ui.home.model.RepoItem
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val gitRepository: GitRepository) : ViewModel() {
+class HomeViewModel(
+    private val gitRepository: GitRepository
+
+) : ViewModel() {
 
     private val successMutableLiveData = MutableLiveData<List<RepoItem>>()
     val successLiveData: LiveData<List<RepoItem>> = successMutableLiveData
@@ -30,13 +33,15 @@ class HomeViewModel(private val gitRepository: GitRepository) : ViewModel() {
                 _errorMutableLiveData.value = R.string.message_error_fetching_data
             }
         }
+
+
     }
 
     /**
      * Fetch list of repositories from network
      */
-    fun fetchRepositories() = viewModelScope.launch {
-        gitRepository.getPublicGitRepos()
+    fun searchRepositories(queryString: String) = viewModelScope.launch {
+        gitRepository.searchPublicGitRepos(queryString)
     }
 
     companion object {

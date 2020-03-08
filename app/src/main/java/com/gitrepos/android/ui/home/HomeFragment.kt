@@ -2,9 +2,11 @@ package com.gitrepos.android.ui.home
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -14,6 +16,7 @@ import com.gitrepos.android.ui.home.model.RepoItem
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.OnItemClickListener
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,8 +35,6 @@ class HomeFragment : Fragment() {
         homeViewModel.successLiveData.observe(viewLifecycleOwner, successObserver)
         homeViewModel.errorLiveData.observe(viewLifecycleOwner, errorObserver)
 
-        homeViewModel.fetchRepositories()
-
         groupAdapter.setOnItemClickListener(onItemClickListener)
         root.rvHome.apply {
             adapter = groupAdapter
@@ -41,6 +42,11 @@ class HomeFragment : Fragment() {
 
         Log.e("TAG", "onCreateView() :$this")
         return root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initSearch()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +89,31 @@ class HomeFragment : Fragment() {
             val repoInfo = item.repo
             val action = HomeFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo)
             findNavController().navigate(action)
+        }
+    }
+
+
+    /**
+     * Init search for search listeners
+     */
+    private fun initSearch() {
+        etSearchRepo.apply {
+            setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    homeViewModel.searchRepositories(text.toString())
+                    true
+                } else {
+                    false
+                }
+            }
+            setOnKeyListener { _, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    homeViewModel.searchRepositories(text.toString())
+                    true
+                } else {
+                    false
+                }
+            }
         }
     }
 

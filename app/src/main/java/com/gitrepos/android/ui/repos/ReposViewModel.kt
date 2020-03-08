@@ -42,12 +42,13 @@ class ReposViewModel(private val dbRepository: DatabaseRepository) : ViewModel()
         bioAuthManager: BioAuthManager
     ): RepoItem = withContext(Dispatchers.Default) {
         repoItem.repo.apply {
-            avatarUrl = bioAuthManager.decryptData(avatarUrl) ?: avatarUrl
-            owner = bioAuthManager.decryptData(owner) ?: owner
-            title = bioAuthManager.decryptData(title) ?: title
+            name = bioAuthManager.decryptData(name) ?: name
+            fullName = bioAuthManager.decryptData(fullName) ?: fullName
+            starsCount = bioAuthManager.decryptData(starsCount) ?: starsCount
+            forksCount = bioAuthManager.decryptData(forksCount) ?: forksCount
             description = description?.let { bioAuthManager.decryptData(it) } ?: description
             language = language?.let { bioAuthManager.decryptData(it) } ?: language
-            fullName = "$owner/$title"
+            homePage = homePage?.let { bioAuthManager.decryptData(it) } ?: homePage
         }
         RepoItem(repoItem.repo)
     }
