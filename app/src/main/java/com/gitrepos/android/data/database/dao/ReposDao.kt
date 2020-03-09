@@ -3,7 +3,6 @@ package com.gitrepos.android.data.database.dao
 import androidx.room.*
 import com.gitrepos.android.data.database.entity.ReposEntity
 import com.gitrepos.android.data.database.entity.table_repos
-import kotlinx.coroutines.flow.Flow
 
 /**
  * Class to provide database actions
@@ -24,6 +23,6 @@ interface ReposDao {
     suspend fun deleteAll(): Int
 
     @Query("select * from $table_repos order by _id desc")
-    fun fetchSavedRepos(): Flow<List<ReposEntity>>
+    fun fetchSavedRepos(): List<ReposEntity>
 
 }

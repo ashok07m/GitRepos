@@ -9,7 +9,6 @@ import com.gitrepos.android.data.auth.BioAuthManager
 import com.gitrepos.android.data.repositories.DatabaseRepository
 import com.gitrepos.android.ui.home.model.RepoItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -23,15 +22,13 @@ class ReposViewModel(private val dbRepository: DatabaseRepository) : ViewModel()
      */
     fun fetchRepositories(bioAuthManager: BioAuthManager) = viewModelScope.launch {
         val repos = dbRepository.fetchSavedRepos()
-        repos.collect {
 
-            it.map { repoItem ->
-                decryptRepositoryDetails(repoItem, bioAuthManager)
-            }
-
-            Log.d("TAG", "fetchRepositories :$it")
-            reposMutableLiveData.value = it
+        repos.map { repoItem ->
+            decryptRepositoryDetails(repoItem, bioAuthManager)
         }
+
+        Log.d("TAG", "fetchRepositories :$repos")
+        reposMutableLiveData.value = repos
     }
 
     /**
