@@ -9,6 +9,7 @@ interface BioAuthCallBacks {
     fun onAuthNegativeButtonClicked()
     fun onKeyInvalidated()
     fun onFingerPrintsNotEnrolled()
+    fun onFingerPrintsEnrolled()
     fun onFingerPrintHardwareUnavailable()
     fun onNoFingerPrintSensorOnDevice()
 }

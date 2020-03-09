@@ -139,7 +139,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             clearAndLogoutUser()
             // show logged out dialog
             showLoggedOutDialog(message = R.string.message_no_fp_enrolled)
+        } else {
+            commonViewModel.setFingerPrintEnrolled(false)
         }
+    }
+
+    override fun onFingerPrintsEnrolled() {
+        commonViewModel.setFingerPrintEnrolled(true)
     }
 
     override fun onFingerPrintHardwareUnavailable() {
@@ -163,9 +169,10 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
      * Performs bio authentication
      */
     fun doBioAUth() {
-        val isEnabledFPLogin =
-            preferenceManager.getBooleanValue(getString(R.string.pref_key_fp_login))
-        if (isEnabledFPLogin && (getCurrentFragment() is LoginFragment || getCurrentFragment() is DetailsFragment)) {
+        val status = commonViewModel.isFingerPrintEnrolled() &&
+                commonViewModel.isBioAuthSettingEnabled() &&
+                !commonViewModel.isBioAuthenticated()
+        if (status && (getCurrentFragment() is LoginFragment || getCurrentFragment() is DetailsFragment)) {
             bioAuthManager.authenticate()
         }
     }

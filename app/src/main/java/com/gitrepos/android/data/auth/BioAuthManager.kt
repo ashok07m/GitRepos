@@ -219,7 +219,9 @@ class BioAuthManager(
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
                 Log.d(TAG, "$errorCode :: $errString")
-                if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+                if ((errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) or
+                    (errorCode == BiometricPrompt.ERROR_USER_CANCELED)
+                ) {
                     bioAuthCallBacks.onAuthNegativeButtonClicked()
                 } else {
                     bioAuthCallBacks.onAuthenticationError(errorCode, errString)
@@ -335,6 +337,7 @@ class BioAuthManager(
 
         when (canAuthenticate) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
+                bioAuthCallBacks.onFingerPrintsEnrolled()
 
                 val encCipher = getCipher()
                 if (initCipher(cipher = encCipher)) {

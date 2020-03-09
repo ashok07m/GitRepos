@@ -26,6 +26,8 @@ class CommonViewModel(
     private val bioAuthMsgMutableLiveData = MutableLiveData<String>()
     val bioAuthMsgLiveData = bioAuthMsgMutableLiveData
     private var isBiAuthenticated = false
+    private var isFingerPrintsEnrolled = false
+
     val emptyData by lazy {
         appContext.getString(R.string.label_not_available)
     }
@@ -106,6 +108,27 @@ class CommonViewModel(
         loginRepository.logout()
         preferenceManager.clearAllPreferences()
         dbRepository.deleteAllData()
+    }
+
+    /**
+     * Sets whether fingerprints enrolled in device
+     */
+    fun setFingerPrintEnrolled(status: Boolean) {
+        isFingerPrintsEnrolled = status
+    }
+
+    /**
+     * Gets whether fingerprints enrolled in device
+     */
+    fun isFingerPrintEnrolled(): Boolean {
+        return isFingerPrintsEnrolled
+    }
+
+    /**
+     * Gets whether fingerprints authentication enabled for app
+     */
+    fun isBioAuthSettingEnabled(): Boolean {
+        return preferenceManager.getBooleanValue(appContext.getString(R.string.pref_key_fp_login))
     }
 
     companion object {

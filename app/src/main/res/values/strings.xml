@@ -61,4 +61,7 @@
     <string name="label_not_available">N.A</string>
     <string name="msg_repo_updates_available">Repository updates are available, please update your store data.</string>
     <string name="title_updates">Updates available</string>
+    <string name="msg_setup_fingerprints">Fingerprints are not enrolled on device, please enroll the fingerprints first</string>
+    <string name="msg_enable_fp_auth">Plese enable biometric authetication from app settings first</string>
+    <string name="msg_auth_first">Please do finger prints authention first.</string>
 </resources>

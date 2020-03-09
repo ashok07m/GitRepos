@@ -26,8 +26,12 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        commonViewModel.getBioAuthManager().canAuthenticate()
 
-        if (!commonViewModel.isBioAuthenticated()) {
+        if (commonViewModel.isFingerPrintEnrolled() &&
+            commonViewModel.isBioAuthSettingEnabled() &&
+            !commonViewModel.isBioAuthenticated()
+        ) if (!commonViewModel.isBioAuthenticated()) {
             activity?.run {
                 (this as MainActivity).doBioAUth()
             }
@@ -59,8 +63,19 @@ class DetailsFragment : Fragment() {
                 homepage = repo.homePage.orEmpty()
             )
 
-            detailsViewModel.saveRepoDetails(reposEntity, commonViewModel.getBioAuthManager())
-                .observe(viewLifecycleOwner, saveResultObserver)
+            if (commonViewModel.isFingerPrintEnrolled() &&
+                commonViewModel.isBioAuthSettingEnabled() &&
+                commonViewModel.isBioAuthenticated()
+            ) {
+                detailsViewModel.saveRepoDetails(reposEntity, commonViewModel.getBioAuthManager())
+                    .observe(viewLifecycleOwner, saveResultObserver)
+            } else if (!commonViewModel.isBioAuthSettingEnabled()) {
+                showToast(R.string.msg_enable_fp_auth)
+            } else if (!commonViewModel.isFingerPrintEnrolled()) {
+                showToast(R.string.msg_setup_fingerprints)
+            } else {
+                showToast(R.string.msg_auth_first)
+            }
         }
     }
 
