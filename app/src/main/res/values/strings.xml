@@ -59,4 +59,6 @@
     <string name="label_forks">Forks</string>
     <string name="label_home_page">Home page</string>
     <string name="label_not_available">N.A</string>
+    <string name="msg_repo_updates_available">Repository updates are available, please update your store data.</string>
+    <string name="title_updates">Updates available</string>
 </resources>

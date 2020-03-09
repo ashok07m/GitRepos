@@ -1,19 +1,20 @@
 package com.gitrepos.android.ui.details
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gitrepos.android.RepoApp
 import com.gitrepos.android.data.auth.BioAuthManager
 import com.gitrepos.android.data.database.entity.ReposEntity
 import com.gitrepos.android.data.repositories.DatabaseRepository
-import com.gitrepos.android.data.repositories.GitRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class DetailsViewModel(
-    private val gitRepository: GitRepository,
+    private val appContext: Context,
     private val dbRepository: DatabaseRepository
 ) : ViewModel() {
 
@@ -28,6 +29,7 @@ class DetailsViewModel(
         viewModelScope.launch {
             val encryptedRepo = encryptRepositoryDetails(reposEntity, bioAuthManager)
             saveResult.value = dbRepository.saveRepo(encryptedRepo)
+            (appContext.applicationContext as RepoApp).setAlarm()
         }
         return saveResult
     }

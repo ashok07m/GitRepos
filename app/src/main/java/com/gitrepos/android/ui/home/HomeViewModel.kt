@@ -1,6 +1,5 @@
 package com.gitrepos.android.ui.home
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -52,7 +51,6 @@ class HomeViewModel(
     fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
         val count = visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD
         if (count >= totalItemCount) {
-            Log.e(TAG, "listScrolled : count :$count , total :$totalItemCount")
             viewModelScope.launch {
                 gitRepository.loadMoreGitRepos(lastSearchedQuery)
             }
