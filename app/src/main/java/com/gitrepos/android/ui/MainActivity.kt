@@ -88,6 +88,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         }
     }
 
+    override fun onBackPressed() {
+        if (getCurrentFragment() is LoginFragment) {
+            finish()
+        }
+        super.onBackPressed()
+    }
+
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,

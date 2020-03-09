@@ -51,23 +51,6 @@ class HomeFragment : Fragment() {
         setupScrollListener()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.e("TAG", "onCreate() :$this")
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.e("TAG", "onDestroyView() :$this")
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.e("TAG", "onDestroy() :$this")
-    }
-
     /**
      * Observer to observe the repos list
      */
