@@ -39,7 +39,6 @@ class DetailsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val repo = args.RepoDetailsArgs
-        val isShowSavedDetails = args.showSavedDetails
 
         txtNameValue.text = repo.name
         txtFullName.text = repo.fullName

@@ -60,10 +60,7 @@
         <argument
             android:name="RepoDetailsArgs"
             app:argType="com.gitrepos.android.ui.home.model.Repo" />
-        <argument
-            android:name="showSavedDetails"
-            android:defaultValue="false"
-            app:argType="boolean" />
+
     </fragment>
 
 </navigation>

@@ -175,15 +175,15 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
      */
     private fun showLoggedOutDialog(message: Int = R.string.msg_new_fingerprint_enrolled) {
         val title = getString(R.string.title_biometric_altered)
-        val message = getString(message)
+        val msg = getString(message)
         val dialog =
             commonViewModel.createDialogBuilder(
                 dialogCallbackListener,
                 title,
-                message
+                msg
             ).build()
 
-        supportFragmentManager?.let { dialog.show(it, NativeAlertDialogFragment.TAG) }
+        supportFragmentManager.let { dialog.show(it, NativeAlertDialogFragment.TAG) }
     }
 
     /**

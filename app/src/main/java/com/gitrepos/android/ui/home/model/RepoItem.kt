@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.view_repo_item.view.*
 class RepoItem(val repo: Repo) : Item() {
 
     override fun bind(viewHolder: GroupieViewHolder, position: Int) {
-        val context = viewHolder.itemView.txtFullName.context
 
         viewHolder.itemView.txtFullName.text = repo.fullName
 

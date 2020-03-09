@@ -55,7 +55,7 @@ class ReposFragment : Fragment() {
         if (item is RepoItem) {
             val repoInfo = item.repo
             val action =
-                ReposFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo, true)
+                ReposFragmentDirections.actionNavigationHomeToDetailsFragment(repoInfo)
             findNavController().navigate(action)
         }
     }

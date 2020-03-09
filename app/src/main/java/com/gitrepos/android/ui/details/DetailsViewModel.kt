@@ -48,7 +48,7 @@ class DetailsViewModel(
             forksCount = bioAuthManager.encryptData(forksCount) ?: forksCount
             description = description?.let { bioAuthManager.encryptData(it) } ?: description
             language = language?.let { bioAuthManager.encryptData(it) } ?: language
-            homepage = homepage?.let { bioAuthManager.encryptData(it) } ?: homepage
+            homepage = bioAuthManager.encryptData(homepage) ?: homepage
         }
     }
 

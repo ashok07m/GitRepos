@@ -23,7 +23,7 @@ class CommonViewModel(
 
     private lateinit var bioAuthManager: BioAuthManager
     private var loggedInUserView: LoggedInUserView? = null
-    private val bioAuthMsgMutableLiveData = MutableLiveData<String>().apply { "" }
+    private val bioAuthMsgMutableLiveData = MutableLiveData<String>()
     val bioAuthMsgLiveData = bioAuthMsgMutableLiveData
     private var isBiAuthenticated = false
     val emptyData by lazy {
