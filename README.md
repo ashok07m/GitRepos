@@ -23,3 +23,6 @@ Incase fingerprints gets cleared or added in device after saving the details of 
 <br><br>
 The purpose of app is to show biometric auhentication security along wih all he latest components.
 </p>
+
+<b>App Flow</b><br><br>
+<img src="flow.gif" alt="App flow">
