@@ -25,4 +25,6 @@ The purpose of app is to show biometric auhentication security along wih all he 
 </p>
 
 <b>App Flow</b><br><br>
-<img src="flow.gif" alt="App flow">
+<div align="center">
+    <img src="flow.gif" width="350px" height="750px"</img> 
+</div>
