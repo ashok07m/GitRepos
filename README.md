@@ -3,6 +3,7 @@ Sample app to implement
 <ul>
   <li>Biometric Auhentication</li>
   <li>Firebase auh</li>
+  <li>Navigation</li> 
   <li>MVVM</li>
   <li>Room</li>
   <li>Koin</li>
